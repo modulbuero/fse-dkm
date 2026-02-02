@@ -1,0 +1,5 @@
+header > div.has-primary-background-color {
+  background-color: #ffffff !important;
+  -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+}/*# sourceMappingURL=header.css.map */
