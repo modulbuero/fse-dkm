@@ -208,7 +208,7 @@
 						"src": [
 							"file:./assets/fonts/Inter_18pt-BlackItalic.ttf"
 						]
-					},
+					}
 				],
 				"fontFamily": "\"Inter\", sans-serif",
 				"name": "Inter",
