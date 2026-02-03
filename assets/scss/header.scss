@@ -2,3 +2,27 @@ header > div.has-primary-background-color{
     background-color: #ffffff !important;
     backdrop-filter: blur(3px);
 }
+
+footer{
+    .parts-footer{
+        background: #000;
+
+        li .wp-block-navigation-item__label,
+        *{
+            color:#fff
+        }
+        li .wp-block-navigation-item__label{
+            font-weight: 200;
+        }
+        >.no-distance-bottom{
+            gap:100px
+        }
+        >.alignfull{
+            border-top: 1px solid #ffffff30;
+            padding-top: var(--mbfse--padding-footer-bottom);
+        }
+        nav{
+            margin-bottom: 175px;
+        }
+    }
+}

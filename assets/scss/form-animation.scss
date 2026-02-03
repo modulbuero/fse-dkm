@@ -1,0 +1,40 @@
+//Formular
+    form{
+        --label-start-pos:31px;
+        --label-start-pos-left:var(--input-padding);
+        --label-focused-pos:-22px;
+        --label-focused-size:16px;
+        
+        //Struktur
+        nf-fields-wrap{
+            nf-field{
+                //Label
+                .nf-field-label {
+                    position: absolute;
+                    top: var(--label-start-pos);
+                    left:var(--label-start-pos-left);
+                    pointer-events: none;
+                    transition: top .18s ease, font-size .18s ease, color .18s ease, transform .18s ease;
+                    padding: 0;
+                    z-index: 1;
+                }
+                &:has(select:valid) {
+                    .nf-field-label {
+                        top: 36px;
+                        left:var(--label-start-pos-left);
+                        font-size: var(--label-focused-size);
+                        color: var(--wp--preset--color--contrast);
+                    }
+                }
+
+                .focus-input .nf-field-label,
+                &:focus-within .nf-field-label {
+                    top: var(--label-focused-pos);
+                    left:0;
+                    font-size: 16px;
+                    color: var(--wp--preset--color--contrast);
+                    opacity: 0.6;
+                }
+            }
+        }
+    }

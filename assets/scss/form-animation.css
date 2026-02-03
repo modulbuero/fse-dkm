@@ -1,0 +1,28 @@
+form {
+  --label-start-pos:31px;
+  --label-start-pos-left:var(--input-padding);
+  --label-focused-pos:-22px;
+  --label-focused-size:16px;
+}
+form nf-fields-wrap nf-field .nf-field-label {
+  position: absolute;
+  top: var(--label-start-pos);
+  left: var(--label-start-pos-left);
+  pointer-events: none;
+  transition: top 0.18s ease, font-size 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  padding: 0;
+  z-index: 1;
+}
+form nf-fields-wrap nf-field:has(select:valid) .nf-field-label {
+  top: 36px;
+  left: var(--label-start-pos-left);
+  font-size: var(--label-focused-size);
+  color: var(--wp--preset--color--contrast);
+}
+form nf-fields-wrap nf-field .focus-input .nf-field-label, form nf-fields-wrap nf-field:focus-within .nf-field-label {
+  top: var(--label-focused-pos);
+  left: 0;
+  font-size: 16px;
+  color: var(--wp--preset--color--contrast);
+  opacity: 0.6;
+}/*# sourceMappingURL=form-animation.css.map */

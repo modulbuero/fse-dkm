@@ -4,7 +4,7 @@
 	"title": "FSE-DKM",
 	"settings": {
 		"layout": {
-			"contentSize": "1000px",
+			"contentSize": "1400px",
 			"wideSize": "1400px"
 		},
 		"color": {
@@ -221,20 +221,22 @@
 		"elements": {
 			"button": {
 				"border": {
-					"radius": "5px"
+					"radius": "0px"
 				}
 			},
 			"heading": {
 				"typography": {
 					"fontFamily":"var(--wp--preset--font-family--inter)",
-					"lineHeight": "1.35"
+					"lineHeight": "1.25",
+					"fontWeight":"300"
 				}
 			}
 		},
 		"typography": {
 			"fontFamily": "var(--wp--preset--font-family--inter)",
 			"fontSize":"18px",
-			"lineHeight": "1.35"
+			"lineHeight": "1.25",
+			"fontWeight":"300"
 		}
 	},
 	"patterns" : [

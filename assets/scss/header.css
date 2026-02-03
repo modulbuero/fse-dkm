@@ -2,4 +2,25 @@ header > div.has-primary-background-color {
   background-color: #ffffff !important;
   -webkit-backdrop-filter: blur(3px);
           backdrop-filter: blur(3px);
+}
+
+footer .parts-footer {
+  background: #000;
+}
+footer .parts-footer li .wp-block-navigation-item__label,
+footer .parts-footer * {
+  color: #fff;
+}
+footer .parts-footer li .wp-block-navigation-item__label {
+  font-weight: 200;
+}
+footer .parts-footer > .no-distance-bottom {
+  gap: 100px;
+}
+footer .parts-footer > .alignfull {
+  border-top: 1px solid rgba(255, 255, 255, 0.1882352941);
+  padding-top: var(--mbfse--padding-footer-bottom);
+}
+footer .parts-footer nav {
+  margin-bottom: 175px;
 }/*# sourceMappingURL=header.css.map */
