@@ -2,6 +2,7 @@
 	$(document).ready(()=>{
         animateJederKommen()
         animateFadeInMaskText()
+        opencloseProjects()
         $(document).on('nfFormReady', function() {
             contactFormLabel()
         });
@@ -78,6 +79,13 @@
                      });
                 }
             });
+        })
+    }
+
+    function opencloseProjects(){
+        let project = '.projekte-wrap > div'
+        $(project).on('click', function(){
+            $(this).toggleClass('open')
         })
     }
 })(jQuery)

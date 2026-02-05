@@ -30,12 +30,12 @@
 					"slug": "secondary"
 				},
 				{
-					"color": "#FFDE10",
+					"color": "#ADFCC2",
 					"name": "Tertiary",
 					"slug": "tertiary"
 				},
 				{
-					"color": "#F4F4F4",
+					"color": "#ADFCC2",
 					"name": "Quaternary",
 					"slug": "quaternary"
 				}

@@ -1,6 +1,29 @@
 header > div.has-primary-background-color{
-    background-color: #ffffff !important;
+    --mbfse--menu-item-color-hover:#000;
+    background-color: #ffffffb0 !important;
     backdrop-filter: blur(3px);
+
+    .wp-block-navigation__responsive-container-content > ul li {
+        a{
+            &:after{
+                content:"\F309";
+                font-family: 'bootstrap-icons';
+                position: absolute;
+                top: 30px;
+                opacity: 0;
+                transition: opacity .3s ease;
+                font-size: 25px;
+            }
+            &:hover{
+                span{
+                    transform: translateY(-5px);
+                }
+                &:after{
+                    opacity: 1;
+                }
+            }        
+        }
+    }
 }
 
 footer{

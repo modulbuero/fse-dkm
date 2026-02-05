@@ -29,76 +29,81 @@
     }
 
     //Startanimation
-    h1{
-        //Start-Text-Animation
-        >span{
-            display: block;
-            filter: blur(20px);
-            opacity: 0;
-            transform: scale(1.05);
-
-            &.line-1 {
-                animation: blurToFocus 0.9s ease-out 0.05s forwards;
-            }
-
-            &.line-2 {
-                animation: blurToFocus 0.9s ease-out 0.25s forwards;
-            }
-
-            &.line-3 {
-                animation: blurToFocus 0.9s ease-out 0.45s forwards;
-            }
-        }
-        .emphasis {
-            font-style: italic;
-            font-weight: 300;
-            display: inline-block;
-            animation: nieFocus 0.25s ease-out 0.7s forwards;
-            transform-origin: center;
-            min-width: 1.2em;
-            text-align: center;
-        }
-        
-        @keyframes blurToFocus {
-            0% {
+    .first-wrap{
+        height: 100vh;
+        h1{
+            margin-top: var(--mbfse-header-height);
+            //Start-Text-Animation
+            >span{
+                display: block;
                 filter: blur(20px);
                 opacity: 0;
                 transform: scale(1.05);
-            }
-            100% {
-                filter: blur(0px);
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        @keyframes nieFocus {
-            0% {
-                transform: scale(1);
-                font-weight: 300;
-            }
-            50% {
-                transform: scale(1.12);
-                font-weight: 700;
-            }
-            100% {
-                transform: scale(1);
-                font-weight: 300;
-            }
-        }
-    }
 
-    .fadeUp{
-        transform: translateY(30vh);
-        animation: fadeElementUp  0.5s ease-out 0.7s forwards;
-    }
-    @keyframes fadeElementUp {
-        0%{
+                &.line-1 {
+                    animation: blurToFocus 0.9s ease-out 0.05s forwards;
+                }
+
+                &.line-2 {
+                    animation: blurToFocus 0.9s ease-out 0.25s forwards;
+                }
+
+                &.line-3 {
+                    animation: blurToFocus 0.9s ease-out 0.45s forwards;
+                }
+            }
+            .emphasis {
+                font-weight: 500;
+                display: inline-block;
+                animation: nieFocus 0.25s ease-out 0.7s forwards;
+                transform-origin: center;
+                min-width: 1.2em;
+                text-align: center;
+            }
+            
+            @keyframes blurToFocus {
+                0% {
+                    filter: blur(20px);
+                    opacity: 0;
+                    transform: scale(1.05);
+                }
+                100% {
+                    filter: blur(0px);
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            @keyframes nieFocus {
+                0% {
+                    transform: scale(1);
+                    font-weight: 300;
+                }
+                50% {
+                    transform: scale(1.12);
+                    font-weight: 700;
+                }
+                100% {
+                    transform: scale(1);
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .fadeUp{
             transform: translateY(30vh);
+            animation: fadeElementUp  0.5s ease-out 0.7s forwards;
+
         }
-        100%{
-            transform: translateY(0);
+        @keyframes fadeElementUp {
+            0%{
+                transform: translateY(30vh);
+            }
+            100%{
+                transform: translateY(0);
+            }
         }
     }
+    
 
     h2{
         text-align: left;
@@ -180,6 +185,10 @@
         .wp-block-button__link{
             padding-left:18px;
         }
+    }
+
+    .wp-block-button.btn-download a:after{
+        content:"\F30A";
     }
 
     //Akkordeon
@@ -333,9 +342,25 @@
         }
     }
 
-    //Ansicht&themen scrolller
+    //Ansicht&themen scrolller , Beyond
     .ansicht-themen{
-
+        >div{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            *{
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            p.has-x-large-font-size{
+                padding-bottom:var(--dkmi-inline-abstand)   
+            }
+            .wp-block-buttons{
+                margin-top: auto;
+                width: 100%;
+            }
+        }
+        
     }
 
     //Kundenstimmen
@@ -376,10 +401,15 @@
     }
 
     //Formular
-    form{
+    .nf-form-cont{
+        width:var(--wp--style--global--content-size);
+        max-width: 100%;
+    }
+    form{        
         --input-padding:30px;
         --input-border-color:#000;
         margin-bottom: var(--mbfse--margin-bottom-block) !important;
+        width: 100%;
         //Struktur
         nf-fields-wrap{
             display: flex;
@@ -406,6 +436,7 @@
                     border-radius: 0;
                     border:1px solid var(--input-border-color);
                     font-size: var(--wp--preset--font-size--normal);
+                    background-color: #ffffffcc;
                 }
 
                 //Submit
@@ -415,6 +446,7 @@
                     padding:var(--input-padding) 50px;
                     border:1px solid var(--input-border-color);
                     font-size: var(--wp--preset--font-size--normal);
+                    background-color: #ffffffcc;
                 }
             }
         }
@@ -424,6 +456,9 @@
     .setting-wrap{
         .wp-block-column:first-child{
             border-right: 1px solid #000;
+        }
+        p.has-tertiary-background-color.has-background{
+            margin-bottom: var(--dkmi-inline-abstand);
         }
     }
     
@@ -442,6 +477,83 @@
                 margin-top: auto;
                 .wp-block-button__link{
                     display: inline;
+                }
+            }
+        }
+    }
+
+    //Projekte
+    .projekte-wrap{
+        padding:0;
+        border:1px solid #000;
+
+        >div{
+            --proj-btn-size:70px;
+            --proj-info-width:500px;
+            
+            display:block;
+            padding:0;
+            max-height: 1080px;
+            >figure{
+                width: 100vw;
+                max-width: 100% !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+            }
+
+            // Text-Container
+            >div{
+                background: #fff;
+                position: absolute;
+                left:100%;
+                top:0;
+                width: var(--proj-info-width);
+                height: 100%;
+                display: flex;                
+                flex-direction: column;
+                justify-content: center;
+                padding: var(--wp--style--root--padding-right);
+                box-sizing: border-box;
+                transition: transform .3s ease;                
+                transform: translateX(0);
+                *{
+                    margin-left: 0 !important;
+                }
+                ul{
+                    margin-block-end: var(--mbfse--margin-bottom-inline);
+                    margin-bottom: var(--mbfse--margin-bottom-inline);
+                }
+
+                &:after{
+                    content:"-";
+                    position: absolute;
+                    bottom:var(--wp--style--root--padding-right);
+                    left:calc((var(--proj-btn-size) + var(--wp--style--root--padding-right)) * -1);
+                    font-size: 36px;
+                    font-weight: 100;
+                    width: var(--proj-btn-size);
+                    height: var(--proj-btn-size);
+                    background-color: var(--wp--preset--color--tertiary);
+                    color:#000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+
+            &:hover{
+                >div{
+                    &:after{
+                        content: "+";
+                    }
+                }
+            }
+
+            &.open{
+                >div{
+                    transform: translateX(-100%);
                 }
             }
         }

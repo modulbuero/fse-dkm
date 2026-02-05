@@ -18,24 +18,29 @@
   text-transform: uppercase;
   margin-bottom: 0;
 }
-.wp-site-blocks .wp-block-post-content h1 > span {
+.wp-site-blocks .wp-block-post-content .first-wrap {
+  height: 100vh;
+}
+.wp-site-blocks .wp-block-post-content .first-wrap h1 {
+  margin-top: var(--mbfse-header-height);
+}
+.wp-site-blocks .wp-block-post-content .first-wrap h1 > span {
   display: block;
   filter: blur(20px);
   opacity: 0;
   transform: scale(1.05);
 }
-.wp-site-blocks .wp-block-post-content h1 > span.line-1 {
+.wp-site-blocks .wp-block-post-content .first-wrap h1 > span.line-1 {
   animation: blurToFocus 0.9s ease-out 0.05s forwards;
 }
-.wp-site-blocks .wp-block-post-content h1 > span.line-2 {
+.wp-site-blocks .wp-block-post-content .first-wrap h1 > span.line-2 {
   animation: blurToFocus 0.9s ease-out 0.25s forwards;
 }
-.wp-site-blocks .wp-block-post-content h1 > span.line-3 {
+.wp-site-blocks .wp-block-post-content .first-wrap h1 > span.line-3 {
   animation: blurToFocus 0.9s ease-out 0.45s forwards;
 }
-.wp-site-blocks .wp-block-post-content h1 .emphasis {
-  font-style: italic;
-  font-weight: 300;
+.wp-site-blocks .wp-block-post-content .first-wrap h1 .emphasis {
+  font-weight: 500;
   display: inline-block;
   animation: nieFocus 0.25s ease-out 0.7s forwards;
   transform-origin: center;
@@ -65,10 +70,10 @@
   }
   100% {
     transform: scale(1);
-    font-weight: 300;
+    font-weight: 500;
   }
 }
-.wp-site-blocks .wp-block-post-content .fadeUp {
+.wp-site-blocks .wp-block-post-content .first-wrap .fadeUp {
   transform: translateY(30vh);
   animation: fadeElementUp 0.5s ease-out 0.7s forwards;
 }
@@ -145,6 +150,9 @@
 }
 .wp-site-blocks .wp-block-post-content .mb-button-outline .wp-block-button__link {
   padding-left: 18px;
+}
+.wp-site-blocks .wp-block-post-content .wp-block-button.btn-download a:after {
+  content: "\f30a";
 }
 .wp-site-blocks .wp-block-post-content details.wp-block-details {
   border: none;
@@ -281,6 +289,22 @@
 .wp-site-blocks .wp-block-post-content .mb-scrollHorizontal > div p:has(+ .wp-block-buttons) {
   margin-bottom: var(--dkmi-inline-abstand);
 }
+.wp-site-blocks .wp-block-post-content .ansicht-themen > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.wp-site-blocks .wp-block-post-content .ansicht-themen > div * {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.wp-site-blocks .wp-block-post-content .ansicht-themen > div p.has-x-large-font-size {
+  padding-bottom: var(--dkmi-inline-abstand);
+}
+.wp-site-blocks .wp-block-post-content .ansicht-themen > div .wp-block-buttons {
+  margin-top: auto;
+  width: 100%;
+}
 .wp-site-blocks .wp-block-post-content .swiper {
   --swiper-navigation-top-offset:52%;
   --swiper-navigation-sides-offset: 0px;
@@ -309,10 +333,15 @@
 .wp-site-blocks .wp-block-post-content .team-wrap > div p.has-large-font-size {
   margin-bottom: 5px;
 }
+.wp-site-blocks .wp-block-post-content .nf-form-cont {
+  width: var(--wp--style--global--content-size);
+  max-width: 100%;
+}
 .wp-site-blocks .wp-block-post-content form {
   --input-padding:30px;
   --input-border-color:#000;
   margin-bottom: var(--mbfse--margin-bottom-block) !important;
+  width: 100%;
 }
 .wp-site-blocks .wp-block-post-content form nf-fields-wrap {
   display: flex;
@@ -334,6 +363,7 @@
   border-radius: 0;
   border: 1px solid var(--input-border-color);
   font-size: var(--wp--preset--font-size--normal);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .wp-site-blocks .wp-block-post-content form nf-fields-wrap nf-field input[type=submit] {
   background-color: #ffffff;
@@ -343,9 +373,13 @@
   padding: var(--input-padding) 50px;
   border: 1px solid var(--input-border-color);
   font-size: var(--wp--preset--font-size--normal);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .wp-site-blocks .wp-block-post-content .setting-wrap .wp-block-column:first-child {
   border-right: 1px solid #000;
+}
+.wp-site-blocks .wp-block-post-content .setting-wrap p.has-tertiary-background-color.has-background {
+  margin-bottom: var(--dkmi-inline-abstand);
 }
 .wp-site-blocks .wp-block-post-content .softwareloesung > div {
   display: flex;
@@ -361,4 +395,65 @@
 }
 .wp-site-blocks .wp-block-post-content .softwareloesung > div .wp-block-buttons .wp-block-button__link {
   display: inline;
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap {
+  padding: 0;
+  border: 1px solid #000;
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div {
+  --proj-btn-size:70px;
+  --proj-info-width:500px;
+  display: block;
+  padding: 0;
+  max-height: 1080px;
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div > figure {
+  width: 100vw;
+  max-width: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div > div {
+  background: #fff;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: var(--proj-info-width);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--wp--style--root--padding-right);
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div > div * {
+  margin-left: 0 !important;
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div > div ul {
+  margin-block-end: var(--mbfse--margin-bottom-inline);
+  margin-bottom: var(--mbfse--margin-bottom-inline);
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div > div:after {
+  content: "-";
+  position: absolute;
+  bottom: var(--wp--style--root--padding-right);
+  left: calc((var(--proj-btn-size) + var(--wp--style--root--padding-right)) * -1);
+  font-size: 36px;
+  font-weight: 100;
+  width: var(--proj-btn-size);
+  height: var(--proj-btn-size);
+  background-color: var(--wp--preset--color--tertiary);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div:hover > div:after {
+  content: "+";
+}
+.wp-site-blocks .wp-block-post-content .projekte-wrap > div.open > div {
+  transform: translateX(-100%);
 }/*# sourceMappingURL=elements.css.map */

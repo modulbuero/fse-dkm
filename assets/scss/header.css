@@ -1,7 +1,23 @@
 header > div.has-primary-background-color {
-  background-color: #ffffff !important;
+  --mbfse--menu-item-color-hover:#000;
+  background-color: rgba(255, 255, 255, 0.6901960784) !important;
   -webkit-backdrop-filter: blur(3px);
           backdrop-filter: blur(3px);
+}
+header > div.has-primary-background-color .wp-block-navigation__responsive-container-content > ul li a:after {
+  content: "\f309";
+  font-family: "bootstrap-icons";
+  position: absolute;
+  top: 30px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 25px;
+}
+header > div.has-primary-background-color .wp-block-navigation__responsive-container-content > ul li a:hover span {
+  transform: translateY(-5px);
+}
+header > div.has-primary-background-color .wp-block-navigation__responsive-container-content > ul li a:hover:after {
+  opacity: 1;
 }
 
 footer .parts-footer {
