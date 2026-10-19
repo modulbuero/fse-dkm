@@ -1,8 +1,7 @@
 header > div.has-primary-background-color {
   --mbfse--menu-item-color-hover:#000;
   background-color: rgba(255, 255, 255, 0.6901960784) !important;
-  -webkit-backdrop-filter: blur(3px);
-          backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
 }
 header > div.has-primary-background-color .wp-block-navigation__responsive-container-content > ul li a:after {
   content: "\f309";
@@ -18,6 +17,12 @@ header > div.has-primary-background-color .wp-block-navigation__responsive-conta
 }
 header > div.has-primary-background-color .wp-block-navigation__responsive-container-content > ul li a:hover:after {
   opacity: 1;
+}
+header > div.has-primary-background-color .wp-block-navigation__responsive-container.has-modal-open.is-menu-open {
+  background-color: #fff;
+}
+header > div.has-primary-background-color .wp-block-navigation__responsive-container.has-modal-open.is-menu-open ul li a span {
+  font-size: 28px;
 }
 
 footer .parts-footer {
@@ -37,6 +42,11 @@ footer .parts-footer > .alignfull {
   border-top: 1px solid rgba(255, 255, 255, 0.1882352941);
   padding-top: var(--mbfse--padding-footer-bottom);
 }
-footer .parts-footer nav {
-  margin-bottom: 175px;
+@media (max-width: 601px) {
+  footer .parts-footer > div {
+    flex-direction: column-reverse;
+  }
+  footer .parts-footer > div div {
+    justify-content: space-between;
+  }
 }/*# sourceMappingURL=header.css.map */

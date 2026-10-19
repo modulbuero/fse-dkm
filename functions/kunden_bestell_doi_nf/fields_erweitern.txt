@@ -1,0 +1,23 @@
+
+add_filter('nf_member_custom_fields', 'meine_custom_fields_anpassung');
+
+function meine_custom_fields_anpassung($custom_fields) {
+    // Beispiel: Neues Feld hinzufügen
+    $custom_fields['nf_neues_feld'] = [
+        'label'    => 'Neues Feld',
+        'section'  => 'Zusätzliche Daten',
+        'type'     => 'text',
+        'sanitize' => 'text',
+        'form_key' => 'neues_feld',
+    ];
+
+    // Beispiel: Bestehendes Feld ändern (z.B. Optionen für nf_preis erweitern)
+    if (isset($custom_fields['nf_preis'])) {
+        $custom_fields['nf_preis']['options']['senior'] = 'Senior';
+    }
+
+    // Beispiel: Feld entfernen
+    unset($custom_fields['nf_zahlungsart']);
+
+    return $custom_fields;
+}

@@ -1,0 +1,76 @@
+/*Mitgliderliste*/
+.nf-members-wrap { max-width: 960px; }
+	.nf-members-wrap h1 { margin-bottom: 16px; }
+
+.nf-members-table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.1); border-radius: 4px; overflow: hidden; }
+	.nf-members-table tr:last-child td { border-bottom: none; }
+	.nf-members-table tr:hover td { background: #f6f9ff; }
+		.nf-members-table th { background: #2271b1; color: #fff; padding: 10px 14px; text-align: left; font-size: 13px; }
+		.nf-members-table td { padding: 9px 14px; font-size: 13px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+
+.nf-badge { display: inline-block; background: #d7e8ff; color: #1a5ba0; border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 600; }
+
+.nf-info-box { background: #fff; border-left: 4px solid #2271b1; padding: 20px 24px; max-width: 700px; box-shadow: 0 1px 3px rgba(0,0,0,.08); border-radius: 2px; line-height: 1.7; }
+	.nf-info-box h2 { margin-top: 0; color: #2271b1; }
+
+.nf-stat-row { display: flex; gap: 16px; margin-bottom: 24px; }
+
+.nf-stat { background: #fff; border-radius: 6px; padding: 16px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.1); text-align: center; min-width: 120px; }
+	.nf-stat strong { display: block; font-size: 28px; color: #2271b1; }
+	.nf-stat span { font-size: 12px; color: #666; }
+
+.nf-empty { color: #888; font-style: italic; padding: 20px 14px !important; }
+
+/*Benutzer bearbeiten*/
+#application-passwords-section,
+.user-edit-php .user-display-name-wrap,
+.user-edit-php .user-role-wrap,
+.user-edit-php .user-nickname-wrap,
+.user-edit-php .user-facebook-wrap,
+.user-edit-php .user-instagram-wrap,
+.user-edit-php .user-linkedin-wrap,
+.user-edit-php .user-myspace-wrap,
+.user-edit-php .user-pinterest-wrap,
+.user-edit-php .user-soundcloud-wrap,
+.user-edit-php .user-tumblr-wrap,
+.user-edit-php .user-wikipedia-wrap,
+.user-edit-php .user-twitter-wrap,
+.user-edit-php .user-youtube-wrap,
+.user-edit-php .user-user-login-wrap,
+.user-edit-php #your-profile .yoast.yoast-settings,
+.user-edit-php #your-profile h2:first-of-type + table,
+.user-edit-php #your-profile h2:first-of-type,
+.user-edit-php #your-profile h2:nth-of-type(4) + table,
+.user-edit-php #your-profile h2:nth-of-type(4),
+.user-edit-php #your-profile h2:nth-of-type(5) + table,
+.user-edit-php #your-profile h2:nth-of-type(5){
+	display:none
+}
+
+
+/*Einstellungen*/
+.nf-settings-box {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+.nf-email-form table {
+    margin: 20px 0;
+}
+.nf-info-box {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+.mitglieder_page_nf-mitglieder-info .nf-info-box ul{
+	list-style: circle;
+    margin-left: 20px;
+	}
+	.mitglieder_page_nf-mitglieder-info .nf-info-box li{
+		margin-bottom: 0
+	}

@@ -1,10 +1,10 @@
 form {
-  --label-start-pos:31px;
-  --label-start-pos-left:var(--input-padding);
+  --label-start-pos:22px;
+  --label-start-pos-left: 29px;
   --label-focused-pos:-22px;
   --label-focused-size:16px;
 }
-form nf-fields-wrap nf-field .nf-field-label {
+form .field-wrap:not(.list-wrap) .nf-field-label {
   position: absolute;
   top: var(--label-start-pos);
   left: var(--label-start-pos-left);
@@ -13,13 +13,13 @@ form nf-fields-wrap nf-field .nf-field-label {
   padding: 0;
   z-index: 1;
 }
-form nf-fields-wrap nf-field:has(select:valid) .nf-field-label {
+form .field-wrap:not(.list-wrap):has(select:valid) .nf-field-label {
   top: 36px;
   left: var(--label-start-pos-left);
   font-size: var(--label-focused-size);
   color: var(--wp--preset--color--contrast);
 }
-form nf-fields-wrap nf-field .focus-input .nf-field-label, form nf-fields-wrap nf-field:focus-within .nf-field-label {
+form .field-wrap:not(.list-wrap) .focus-input .nf-field-label, form .field-wrap:not(.list-wrap):focus-within .nf-field-label {
   top: var(--label-focused-pos);
   left: 0;
   font-size: 16px;

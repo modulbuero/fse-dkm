@@ -24,6 +24,13 @@ header > div.has-primary-background-color{
             }        
         }
     }
+
+    .wp-block-navigation__responsive-container.has-modal-open.is-menu-open{
+        background-color: #fff;
+        ul li a span{
+            font-size:28px
+        }
+    }
 }
 
 footer{
@@ -44,8 +51,13 @@ footer{
             border-top: 1px solid #ffffff30;
             padding-top: var(--mbfse--padding-footer-bottom);
         }
-        nav{
-            margin-bottom: 175px;
+        @media (max-width: 601px){
+            >div{
+                flex-direction: column-reverse;
+                div{
+                    justify-content: space-between;
+                }
+            }
         }
     }
 }

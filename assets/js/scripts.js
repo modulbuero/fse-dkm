@@ -2,10 +2,18 @@
 	$(document).ready(()=>{
         animateJederKommen()
         animateFadeInMaskText()
-        opencloseProjects()
+        opencloseContact()
+        
         $(document).on('nfFormReady', function() {
-            contactFormLabel()
+            //contactFormLabel()
+            calculateWartungHosting()
+            $(document).on('click', '.nf-next, .nf-prev', function() {
+                setTimeout(function() {
+                    $('#gesamtsumme').text(letzteSumme);
+                }, 200);
+            });
         });
+        
     })
 
     /*Kontakt-Formular Label-Activation*/
@@ -82,10 +90,82 @@
         })
     }
 
-    function opencloseProjects(){
-        let project = '.projekte-wrap > div'
+    function opencloseContact(){
+        let project = '.anfrage-wrap > > div:last-child'
         $(project).on('click', function(){
             $(this).toggleClass('open')
         })
+    }
+
+    function calculateWartungHosting(){
+       
+
+            function berechneGesamtsumme() {
+
+                var gesamt = 0;
+
+                $('#nf-field-19 .nf-repeater-fieldset').each(function() {
+
+                    var $fieldset = $(this);
+
+                    // -------------------------
+                    // Paket
+                    // -------------------------
+                    var paket = $fieldset
+                        .find('input[name^="nf-field-19.2_"]:checked')
+                        .val();
+
+                    var paketPreise = {
+                        'paket-S': 180,
+                        'paket-M': 204,
+                        'paket-L': 264,
+                        'paket-XL': 312,
+                        'paket-XXL': 408
+                    };
+
+                    if (paketPreise[paket] !== undefined) {
+                        gesamt += paketPreise[paket];
+                    }
+
+
+                    // -------------------------
+                    // Wartung
+                    // -------------------------
+                    var wartung = $fieldset
+                        .find('input[name^="nf-field-19.3_"]:checked')
+                        .val();
+
+                    var wartungPreise = {
+                        'wartung-standard': 0,
+                        'wartung-plus': 240,
+                        'wartung-pro': 480
+                    };
+
+                    if (wartungPreise[wartung] !== undefined) {
+                        gesamt += wartungPreise[wartung];
+                    }
+
+                });
+
+                letzteSumme = gesamt;
+
+                // -------------------------
+                // Ausgabe
+                // -------------------------
+                $('#gesamtsumme').text(gesamt);
+            }
+
+            // Änderung von Paket oder Wartung
+            $(document).on(
+                'change',
+                '#nf-field-19 input[type="radio"]',
+                function() {
+                    berechneGesamtsumme();
+                }
+            );
+
+            // Initial berechnen
+            berechneGesamtsumme();
+       
     }
 })(jQuery)
