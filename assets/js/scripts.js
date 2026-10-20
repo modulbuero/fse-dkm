@@ -116,11 +116,11 @@
                         .val();
 
                     var paketPreise = {
-                        'paket-S': 180,
-                        'paket-M': 204,
-                        'paket-L': 264,
-                        'paket-XL': 312,
-                        'paket-XXL': 408
+                        'Paket-S': 180,
+                        'Paket-M': 204,
+                        'Paket-L': 264,
+                        'Paket-XL': 312,
+                        'Paket-XXL': 408
                     };
 
                     if (paketPreise[paket] !== undefined) {
@@ -136,9 +136,9 @@
                         .val();
 
                     var wartungPreise = {
-                        'wartung-standard': 0,
-                        'wartung-plus': 240,
-                        'wartung-pro': 480
+                        'Wartung-Standard': 0,
+                        'Wartung-Plus': 240,
+                        'Wartung-Pro': 480
                     };
 
                     if (wartungPreise[wartung] !== undefined) {

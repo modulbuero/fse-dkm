@@ -1,0 +1,163 @@
+$color_1: #fff;
+$color_2: #1a5ba0;
+$color_3: #2271b1;
+$color_4: #666;
+$color_5: #888;
+
+
+.nf-members-wrap {
+	max-width: 960px;
+	h1 {
+		margin-bottom: 16px;
+	}
+}
+
+.nf-members-table {
+	border-collapse: collapse;
+	width: 100%;
+	background: #fff;
+	box-shadow: 0 1px 3px rgba(0,0,0,.1);
+	border-radius: 4px;
+	overflow: hidden;
+	tr {
+		&:last-child {
+			td {
+				border-bottom: none;
+			}
+		}
+		&:hover {
+			td {
+				background: #f6f9ff;
+			}
+		}
+	}
+	th {
+		background: #2271b1;
+		color: $color_1;
+		padding: 10px 14px;
+		text-align: left;
+		font-size: 13px;
+	}
+	td {
+		padding: 9px 14px;
+		font-size: 13px;
+		border-bottom: 1px solid #f0f0f0;
+		vertical-align: middle;
+	}
+
+    th,td{
+        &:first-child{
+            min-width: 110px;
+        }
+        &:nth-child(2){
+            min-width: 40px;
+        }
+        &:nth-child(9),
+        &:nth-child(4),
+        &:nth-child(5),
+        &:nth-child(6){
+            min-width: 100px;
+        }
+         &:nth-child(7){
+            min-width: 55px;
+        }
+        &:nth-child(8){
+            min-width: 100px;
+        }
+        &:nth-child(10){
+            min-width: 160px;
+        }
+        &:nth-child(11){
+            min-width: 100px;
+        }
+    }
+}
+
+.nf-badge {
+	display: inline-block;
+	background: #d7e8ff;
+	color: $color_2;
+	border-radius: 20px;
+	padding: 2px 10px;
+	font-size: 11px;
+	font-weight: 600;
+}
+.nf-info-box {
+	background: #fff;
+	border-left: 4px solid #2271b1;
+	padding: 20px 24px;
+	max-width: 700px;
+	box-shadow: 0 1px 3px rgba(0,0,0,.08);
+	border-radius: 2px;
+	line-height: 1.7;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	padding: 20px;
+	margin-top: 20px;
+	border-radius: 4px;
+	h2 {
+		margin-top: 0;
+		color: $color_3;
+	}
+}
+.nf-stat-row {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+.nf-stat {
+	background: #fff;
+	border-radius: 6px;
+	padding: 16px 24px;
+	box-shadow: 0 1px 3px rgba(0,0,0,.1);
+	text-align: center;
+	min-width: 120px;
+	strong {
+		display: block;
+		font-size: 28px;
+		color: $color_3;
+	}
+	span {
+		font-size: 12px;
+		color: $color_4;
+	}
+}
+.nf-empty {
+	color: $color_5;
+	font-style: italic;
+	padding: 20px 14px !important;
+}
+#application-passwords-section {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	padding: 20px;
+	margin-top: 20px;
+	border-radius: 4px;
+}
+.user-edit-php {
+	.user- {
+		.nf-settings-box {
+			background: #fff;
+			border: 1px solid #ccd0d4;
+			padding: 20px;
+			margin-top: 20px;
+			border-radius: 4px;
+		}
+	}
+}
+.nf-email-form {
+	table {
+		margin: 20px 0;
+	}
+}
+.mitglieder_page_nf-mitglieder-info {
+	.nf-info-box {
+		ul {
+			list-style: circle;
+			margin-left: 20px;
+		}
+		li {
+			margin-bottom: 0;
+		}
+	}
+}
