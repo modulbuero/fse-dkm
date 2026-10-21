@@ -9,6 +9,41 @@ if(!defined('ABSPATH')) exit;
 class NF_Member_Registration {
 
     private $target_form = 'Hosting Bestellung';
+    private $target_cancellation_form = 'Hosting Kündigung';
+
+    private $cancellation_fields = [
+        'cancellation_customer_number' => [
+            'label'    => 'Kundennummer',
+            'type'     => 'text',
+            'sanitize' => 'text',
+            'form_key' => 'kundennummer',
+        ],
+        'cancellation_postcode' => [
+            'label'    => 'PLZ',
+            'type'     => 'text',
+            'sanitize' => 'text',
+            'form_key' => 'postleitzahl',
+        ],
+        'cancellation_date' => [
+            'label'    => 'Kündigungsdatum',
+            'type'     => 'text',
+            'sanitize' => 'text',
+            'form_key' => 'kuendigungsdatum',
+        ],
+        'cancellation_email' => [
+            'label'    => 'E-Mail',
+            'type'     => 'email',
+            'sanitize' => 'email',
+            'form_key' => 'e-mail_fuer_die_bestaetigung',
+        ],
+        'adresse_der_webseite' => [
+            'label'       => 'Webseite',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'adresse_der_webseite',
+        ],
+    ];
 
     /**
      * Feldkonfiguration – neues Feld = neuer Array-Eintrag, fertig.
@@ -107,6 +142,7 @@ class NF_Member_Registration {
     // =========================================================================
     public function __construct(){
         add_action('ninja_forms_after_submission', [$this, 'handle_submission'], 10, 1);
+        add_action('ninja_forms_after_submission', [$this, 'handle_cancellation_submission'], 10, 1);
         add_action('init',                         [$this, 'handle_confirmation']);
 
         // Backend-Menü
@@ -116,6 +152,8 @@ class NF_Member_Registration {
 
         // Erweiterbare Felder
         $this->custom_fields = apply_filters('nf_member_custom_fields', $this->custom_fields);
+        $this->target_cancellation_form = apply_filters('nf_cancellation_form_title', $this->target_cancellation_form);
+        $this->cancellation_fields = apply_filters('nf_cancellation_custom_fields', $this->cancellation_fields);
     }
 
     // =========================================================================
@@ -125,6 +163,8 @@ class NF_Member_Registration {
         switch($type){
             case 'iban':
                 return strtoupper(sanitize_text_field(str_replace(' ', '', $value)));
+            case 'email':
+                return sanitize_email($value);
             case 'select':
                 $value = sanitize_text_field($value);
                 foreach(($config['options'] ?? []) as $option_value => $option_label){
@@ -181,7 +221,8 @@ class NF_Member_Registration {
      * Liefert [meta_key, zeilenindex|null] oder null.
      * Zeilenindex stammt aus Suffixen wie "15_0" oder "paket_1".
     */
-    private function resolve_meta_key(array $item): ?array {
+    private function resolve_meta_key(array $item, ?array $field_configs = null): ?array {
+        $field_configs = $field_configs ?? $this->custom_fields;
         $candidates = [];
 
         foreach(['key', 'name'] as $k){
@@ -208,7 +249,7 @@ class NF_Member_Registration {
                 $base = $m[1];
                 $row  = (int)$m[2];
             }
-            foreach($this->custom_fields as $meta_key => $cfg){
+            foreach($field_configs as $meta_key => $cfg){
                 $fk = $cfg['form_key'] ?? '';
                 if($fk === '') continue;
                 if($c === $fk) return [$meta_key, null];
@@ -218,38 +259,52 @@ class NF_Member_Registration {
         return null;
     }
 
-    private function store_meta(string $meta_key, $raw, ?int $row, array &$meta): void {
-        if($row !== null && $row !== 0) return;          // nur erste Zeile
-        if(array_key_exists($meta_key, $meta)) return;   // erster Treffer gewinnt
+    private function store_meta(string $meta_key, $raw, ?int $row, array &$meta, ?array $field_configs = null): void {
+        $field_configs = $field_configs ?? $this->custom_fields;
         $value = $this->normalize_form_value($raw);
         if($value === '') return;
-        $cfg = $this->custom_fields[$meta_key];
-        $meta[$meta_key] = $this->sanitize_field($cfg['sanitize'] ?? 'text', $value, $cfg);
+        $cfg = $field_configs[$meta_key];
+        $value = $this->sanitize_field($cfg['sanitize'] ?? 'text', $value, $cfg);
+
+        // Bei der Kündigung alle wiederholten Webseiten sammeln; andere Felder
+        // bleiben wie bisher auf den ersten Gruppeneintrag beschränkt.
+        if($meta_key === 'adresse_der_webseite' && isset($field_configs[$meta_key])){
+            $websites = !empty($meta[$meta_key]) ? explode(', ', $meta[$meta_key]) : [];
+            $websites[] = $value;
+            $websites = array_values(array_unique(array_filter(array_map('trim', $websites))));
+            $meta[$meta_key] = implode(', ', $websites);
+            return;
+        }
+
+        if($row !== null && $row !== 0) return;
+        if(array_key_exists($meta_key, $meta)) return;
+        $meta[$meta_key] = $value;
     }
 
 
-    private function collect_nested_custom_fields($node, array &$meta): void {
+    private function collect_nested_custom_fields($node, array &$meta, ?array $field_configs = null): void {
         //Wiederholbare Feldgruppe
         if(!is_array($node)) return;
+        $field_configs = $field_configs ?? $this->custom_fields;
 
         // Feldobjekt mit value
         if(array_key_exists('value', $node) && (isset($node['key']) || isset($node['name']) || isset($node['id']))){
-            $r = $this->resolve_meta_key($node);
+            $r = $this->resolve_meta_key($node, $field_configs);
             if($r !== null){
-                $this->store_meta($r[0], $node['value'], $r[1], $meta);
+                $this->store_meta($r[0], $node['value'], $r[1], $meta, $field_configs);
                 return;
             }
-            $this->collect_nested_custom_fields($node['value'], $meta);
+            $this->collect_nested_custom_fields($node['value'], $meta, $field_configs);
             return;
         }
 
         foreach($node as $k => $child){
             if(is_array($child)){
-                $this->collect_nested_custom_fields($child, $meta);
+                $this->collect_nested_custom_fields($child, $meta, $field_configs);
             } elseif(is_string($k) && $k !== 'value'){
-                $r = $this->resolve_meta_key(['key' => $k]);
+                $r = $this->resolve_meta_key(['key' => $k], $field_configs);
                 if($r !== null) {
-                    $this->store_meta($r[0], $child, $r[1], $meta);
+                    $this->store_meta($r[0], $child, $r[1], $meta, $field_configs);
                 }
             }
         }
@@ -267,18 +322,28 @@ class NF_Member_Registration {
     }
 
     private function format_custom_fields_for_email(array $values, string $email = '', bool $html = false): string {
+        return $this->format_fields_for_email($values, $this->custom_fields, $html, $email);
+    }
+
+    private function format_fields_for_email(array $values, array $field_configs, bool $html = true, string $email = ''): string {
         $lines = [];
 
-        foreach($this->custom_fields as $meta_key => $cfg){
+        foreach($field_configs as $meta_key => $cfg){
             if($meta_key === 'nf_iban'){
                 continue;
             }
 
             $value = $values[$meta_key] ?? '';
-            if($meta_key === 'nf_email' && $value === ''){
+            if(in_array($meta_key, ['nf_email', 'cancellation_email'], true) && $value === ''){
                 $value = $email;
             }
-            $value = $this->display_custom_field_value($meta_key, $value);
+            if(!is_scalar($value)){
+                $value = '';
+            } elseif(isset($cfg['options'][(string)$value])){
+                $value = $cfg['options'][$value];
+            } else {
+                $value = (string)$value;
+            }
             if($value === '') continue;
 
             if($html){
@@ -289,6 +354,41 @@ class NF_Member_Registration {
         }
 
         return implode($html ? '<br>' : "\n", $lines);
+    }
+
+    private function confirm_cancellation(array $data): void {
+        $email = sanitize_email($data['email'] ?? '');
+        $meta = is_array($data['meta'] ?? null) ? $data['meta'] : [];
+        $berlin_timezone = new DateTimeZone('Europe/Berlin');
+        $confirmed_datetime = new DateTimeImmutable('now', $berlin_timezone);
+
+        $cancellations = get_option('nf_member_confirmed_cancellations', []);
+        if(!is_array($cancellations)) $cancellations = [];
+        $cancellations[] = [
+            'confirmed_at' => $confirmed_datetime->format('Y-m-d H:i:s'),
+            'email'        => $email,
+            'meta'         => $meta,
+        ];
+        update_option('nf_member_confirmed_cancellations', $cancellations, false);
+
+        $fields = $this->format_fields_for_email($meta, $this->cancellation_fields);
+        $customer_body = "Sehr geehrte Kundin, sehr geehrter Kunde,<br><br>"
+            ."Ihre Kündigung wurde bestätigt und protokolliert.<br>"
+            ."Sie erhalten in kürze den Authcode zu Ihrer Domain.<br><br>"
+            .($fields !== '' ? "Ihre Angaben:\n".$fields."<br><br>" : '')
+            ."Bestätigt am: ".$confirmed_datetime->format('d.m.Y H:i:s')
+            .$this->mailfooter();
+        wp_mail($email, 'Kündigung bestätigt', $customer_body, ['Content-Type: text/html; charset=UTF-8']);
+
+        $admin_email = get_option('nf_member_admin_email');
+        if(is_email($admin_email)){
+            $admin_body = "Eine Kündigung wurde bestätigt:<br><br>"
+                .$fields."<br>"
+                ."Bestätigt am: ".$confirmed_datetime->format('d.m.Y H:i:s')
+                .$this->mailfooter();
+
+            wp_mail($admin_email, 'Neue bestätigte Kündigung', $admin_body, ['Content-Type: text/html; charset=UTF-8']);
+        }
     }
 
     /*  =========================================================================
@@ -330,16 +430,105 @@ class NF_Member_Registration {
             'meta'       => $meta,
         ]);
 
-        $confirm_url =  add_query_arg(['nf_confirm' => $token], home_url('/bestellung-bestaetigen/')) ;
-        $headers = array('Content-Type: text/html; charset=UTF-8');
+        $confirm_url      = esc_url(add_query_arg(['nf_confirm' => $token], home_url('/hosting/bestellung-bestaetigen/')));
+        $headers          = array('Content-Type: text/html; charset=UTF-8');
         $submitted_fields = $this->format_custom_fields_for_email($meta, $email, true);
+        $link_text        = "Bestellung bestätigen";
+        $confirmbutton = "
+            <p>
+                <!--[if mso]>
+                <v:rect xmlns:v='urn:schemas-microsoft-com:vml'
+                    href='".$confirm_url."'
+                    style='height:44px; width:180px; v-text-anchor:middle;'
+                    fillcolor='#ADFCC2'
+                    strokecolor='#000000'
+                    strokeweight='1pt'>
+                    <w:anchorlock/>
+                    <center style='color:#000000; font-family:Arial; font-size:16px;'>
+                        ".$link_text."
+                    </center>
+                </v:rect>
+                <![endif]-->
+
+                <!--[if !mso]><!-->
+                <a href='".$confirm_url."' style='background-color:#ADFCC2; color:#000000;
+                    display:inline-block; padding:12px 24px; text-decoration:none;
+                    font-family:Arial, sans-serif; font-size:16px;
+                    border:1px solid #000000;'>".$link_text."</a>
+                <!--<![endif]-->
+            </p>";
+
         wp_mail(
         	$email, 
         	'Bestellung bestätigen',
-            "Bitte bestätige deine Bestellung bei ".esc_html(get_option('blogname'))." mit Klick auf folgendem Link:<br><br>".$confirm_url
-                .($submitted_fields !== '' ? '<br><br>Deine Angaben:<br>'.$submitted_fields : ''),
+            "Sehr geehrte Kundin, sehr geehrter Kunde,<br><br>"
+            ."bitte bestätigen Sie Ihre Bestellung bei ".esc_html(get_option('blogname'))." im Modulbüro mit Klick auf folgenden Button:<br><br>".$confirmbutton
+                .($submitted_fields !== '' ? '<br><br>Deine Angaben:<br>'.$submitted_fields : '')
+                .$this->mailfooter(),
             $headers
             );
+    }
+
+    public function handle_cancellation_submission($form_data){
+        if(($form_data['settings']['title'] ?? '') !== $this->target_cancellation_form) return;
+
+        $meta = [];
+        $this->field_id_map = [];
+        $this->build_id_map($form_data['fields'] ?? []);
+
+        foreach(($form_data['fields'] ?? []) as $field){
+            if(is_array($field)){
+                $this->collect_nested_custom_fields($field, $meta, $this->cancellation_fields);
+            }
+        }
+
+        $email = sanitize_email($meta['cancellation_email'] ?? '');
+        if(!is_email($email)) return;
+
+        $token = wp_generate_uuid4();
+        add_option('nf_cancellation_'.$token, [
+            'type'  => 'cancellation',
+            'email' => $email,
+            'meta'  => $meta,
+        ]);
+
+        $confirm_url      = esc_url(add_query_arg(['nf_confirm' => $token], home_url('/kuendigung/bestaetigen/')));
+        $headers          = ['Content-Type: text/html; charset=UTF-8'];
+        $submitted_fields = $this->format_fields_for_email($meta, $this->cancellation_fields, true);
+        $link_text        = "Kündigung bestätigen";
+        $confirmbutton = "
+            <p>
+                <!--[if mso]>
+                <v:rect xmlns:v='urn:schemas-microsoft-com:vml'
+                    href='".$confirm_url."'
+                    style='height:44px; width:180px; v-text-anchor:middle;'
+                    fillcolor='#ADFCC2'
+                    strokecolor='#000000'
+                    strokeweight='1pt'>
+                    <w:anchorlock/>
+                    <center style='color:#000000; font-family:Arial; font-size:16px;'>
+                        ".$link_text."
+                    </center>
+                </v:rect>
+                <![endif]-->
+
+                <!--[if !mso]><!-->
+                <a href='".$confirm_url."' style='background-color:#ADFCC2; color:#000000;
+                    display:inline-block; padding:12px 24px; text-decoration:none;
+                    font-family:Arial, sans-serif; font-size:16px;
+                    border:1px solid #000000;'>".$link_text."</a>
+                <!--<![endif]-->
+            </p>";
+
+        wp_mail(
+            $email,
+            'Kündigung bestätigen',
+            'Bitte bestätigen Sie Ihre Kündigung bei '.esc_html(get_option('blogname'))
+                .' über folgenden Button:<br><br>'.$confirmbutton
+                .($submitted_fields !== '' ? '<br><br>Ihre Angaben:<br>'.$submitted_fields : '')
+                .$this->mailfooter(),
+            $headers
+        );
     }
 
     /*  =========================================================================
@@ -351,7 +540,19 @@ class NF_Member_Registration {
 
         $token = sanitize_text_field(wp_unslash($_GET['nf_confirm']));
         $data  = get_option('nf_member_'.$token);
+        $option_name = 'nf_member_'.$token;
+        if(!$data){
+            $option_name = 'nf_cancellation_'.$token;
+            $data = get_option($option_name);
+        }
         if(!$data) wp_die('Ungültiger Bestätigungslink.');
+
+        if(($data['type'] ?? '') === 'cancellation'){
+            $this->confirm_cancellation($data);
+            delete_option($option_name);
+            wp_safe_redirect(home_url('/kuendigung/bestaetigen/'));
+            exit;
+        }
 
         // Bestätigte Anträge als Protokoll speichern, ohne WordPress-Benutzerkonto.
         $submissions = get_option('nf_member_confirmed_submissions', []);
@@ -371,29 +572,29 @@ class NF_Member_Registration {
             sanitize_email($data['email'] ?? '')
         );
 
-        $customer_email_body = "Sehr geehrte Kundin, sehr geehrter Kunde,\n\n"
-            ."vielen Dank für Ihre Bestellung. Ihre Angaben wurden erfolgreich über unsere Website übermittelt und bestätigt.\n\n"
-            .($customer_fields !== '' ? "Ihre Angaben:\n".$customer_fields."\n\n" : '')
-            ."Mit freundlichen Grüßen\nMaik Pluschle";
-        wp_mail($data['email'], 'Bestellung bestätigt', $customer_email_body);
+        $customer_email_body = "Sehr geehrte Kundin, sehr geehrter Kunde,<br><br>"
+            ."vielen Dank für Ihre Bestellung.\n"
+            ."Ihre Angaben wurden erfolgreich über unsere Website übermittelt und bestätigt."
+            .$this->mailfooter();
+        wp_mail($data['email'], 'Bestellung bestätigt', $customer_email_body, ['Content-Type: text/html; charset=UTF-8']);
 
         // Admin-Benachrichtigung versenden
         $admin_email = get_option('nf_member_admin_email');
         if($admin_email){
             $current_date   = $confirmed_datetime->format('d.m.Y H:i:s');
             $email_subject  = 'Neuer bestätigter Bestellantrag';
-            $email_body     = "Eine Beställung wurde bestätigt:\n\n"
+            $email_body     = "Eine Bestellung wurde bestätigt:<br><br>"
                 .$this->format_custom_fields_for_email(
                     is_array($data['meta'] ?? null) ? $data['meta'] : [],
                     sanitize_email($data['email'] ?? '')
-                )."\n"
-                ."Bestätigt am: ".$current_date."\n\n";
+                )."<br>"
+                ."Bestätigt am: ".$current_date.$this->mailfooter();
             
-            wp_mail($admin_email, $email_subject, $email_body);
+            wp_mail($admin_email, $email_subject, $email_body, ['Content-Type: text/html; charset=UTF-8']);
         }
 
-        delete_option('nf_member_'.$token);
-        wp_redirect(home_url('/bestellung-bestaetigen/'));
+        delete_option($option_name);
+        wp_redirect(home_url('/hosting/bestellung-bestaetigen/'));
         exit;
     }
 
@@ -408,7 +609,7 @@ class NF_Member_Registration {
             'dashicons-superhero', 26
         );
         add_submenu_page(
-            'nf-mitglieder', 'Bestätigte Anträge', 'Bestätigte Anträge',
+            'nf-mitglieder', 'Bestätigte Bestellungen', 'Bestellungen',
             'manage_options', 'nf-mitglieder',
             [$this, 'page_mitglieder_liste']
         );
@@ -416,6 +617,11 @@ class NF_Member_Registration {
             'nf-mitglieder', 'E-Mail-Einstellungen', 'E-Mail-Einstellungen',
             'manage_options', 'nf-mitglieder-email',
             [$this, 'page_mitglieder_email']
+        );
+        add_submenu_page(
+            'nf-mitglieder', 'Bestätigte Kündigungen', 'Kündigungen',
+            'manage_options', 'nf-kuendigungen',
+            [$this, 'page_cancellations']
         );
     }
 
@@ -506,7 +712,7 @@ class NF_Member_Registration {
     }
 
     /*  =========================================================================
-        Unterseite 1: Bestätigte Anträge
+        Unterseite 1: Bestätigte Bestellungen
         =========================================================================
     */
     public function export_orders_csv(){
@@ -570,12 +776,12 @@ class NF_Member_Registration {
         <div class="wrap nf-members-wrap">
             <h1>
                 <span class="dashicons dashicons-groups" style="font-size:26px;vertical-align:middle;margin-right:6px;"></span>
-                Bestätigte Anträge
+                Bestätigte Bestellungen
             </h1>
             <div class="nf-stat-row">
                 <div class="nf-stat">
                     <strong><?php echo esc_html($count); ?></strong>
-                    <span>Bestätigte Anträge</span>
+                    <span>Bestellungen</span>
                 </div>
                 <a class="button button-primary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=nf_export_orders_csv'), 'nf_export_orders_csv')); ?>">
                     CSV herunterladen
@@ -624,6 +830,75 @@ class NF_Member_Registration {
             </table>
         </div>
         <?php
+    }
+
+    public function page_cancellations(){
+        if(!current_user_can('manage_options')){
+            wp_die('Keine Berechtigung.');
+        }
+
+        $cancellations = get_option('nf_member_confirmed_cancellations', []);
+        if(!is_array($cancellations)) $cancellations = [];
+        $cancellations = array_reverse($cancellations);
+        ?>
+        <div class="wrap nf-members-wrap">
+            <h1>Bestätigte Kündigungen</h1>
+            <div class="nf-stat-row">
+                <div class="nf-stat">
+                    <strong><?php echo esc_html(count($cancellations)); ?></strong>
+                    <span>Bestätigte Kündigungen</span>
+                </div>
+            </div>
+            <table class="nf-members-table">
+                <thead>
+                    <tr>
+                        <th>Bestätigt am</th>
+                        <th>E-Mail</th>
+                        <?php foreach($this->cancellation_fields as $key => $cfg):
+                            if($key === 'cancellation_email') continue;
+                            ?>
+                            <th><?php echo esc_html($cfg['label']); ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if(empty($cancellations)): ?>
+                        <tr>
+                            <td colspan="<?php echo esc_attr(count($this->cancellation_fields) + 1); ?>" class="nf-empty">
+                                Noch keine Kündigungen bestätigt.
+                            </td>
+                        </tr>
+                    <?php else: foreach($cancellations as $cancellation):
+                        $fields = is_array($cancellation['meta'] ?? null) ? $cancellation['meta'] : [];
+                        $confirmed_at = !empty($cancellation['confirmed_at'])
+                            ? (new DateTimeImmutable($cancellation['confirmed_at'], new DateTimeZone('Europe/Berlin')))->format('d.m.Y H:i')
+                            : '–';
+                        ?>
+                        <tr>
+                            <td><?php echo esc_html($confirmed_at); ?></td>
+                            <td><?php echo esc_html($cancellation['email'] ?? '–'); ?></td>
+                            <?php foreach($this->cancellation_fields as $key => $cfg):
+                                if($key === 'cancellation_email') continue;
+                                $value = $fields[$key] ?? '';
+                                ?>
+                                <td><?php echo esc_html($value !== '' ? $value : '–'); ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+
+    public function mailfooter(){
+        $footer = "<br><br>Mit freundlichen Grüßen<br>
+        Maik Pluschke<br>
+        <a href='https://dkm.team/' style='font-size:12px;color:#000000 !important; text-decoration:none;'>
+            <strong>DESIGN &amp; KOMMUNIKATION</strong><br>IM MODULBÜRO
+        </a>";
+
+        return $footer;
     }
 }
 
