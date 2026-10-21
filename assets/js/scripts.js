@@ -3,7 +3,8 @@
         animateJederKommen()
         animateFadeInMaskText()
         opencloseContact()
-        
+        pinLösungen()
+        scrollAwardsFast()
         $(document).on('nfFormReady', function() {
             //contactFormLabel()
             calculateWartungHosting()
@@ -13,7 +14,7 @@
                 }, 200);
             });
         });
-        
+        window.addEventListener("load", () => ScrollTrigger.refresh());
     })
 
     /*Kontakt-Formular Label-Activation*/
@@ -167,5 +168,121 @@
             // Initial berechnen
             berechneGesamtsumme();
        
+    }
+
+    function pinLösungen(){
+        gsap.registerPlugin(ScrollTrigger);
+
+        const parent    = document.querySelector(".loesung-pin");
+        const items     = gsap.utils.toArray(".loesung-pin > *");
+        const last      = items[items.length - 1];
+        //Offset für den Pin-Punkt
+        const style     = getComputedStyle(parent);
+        const block     = style.getPropertyValue("--mbfse--margin-bottom-block");
+        const header    = style.getPropertyValue("--mbfse-header-height");       
+        const offset    = parseFloat(block) + parseFloat(header);
+        const offsetpx  = offset + "px";        
+        //Gleiche Höhe wenn nicht mobile
+        const mqMobile  = window.matchMedia("(max-width: 600px)");
+        const setEqualHeights = () => {
+            //Zurücksetzen, damit die natürliche Höhe gemessen wird
+            items.forEach((el) => (el.style.minHeight = ""));
+            // 2. Mobil: alle Kinder 100vh
+            if (mqMobile.matches) {
+                items.forEach((el) => (el.style.minHeight = "calc(100vh - " + offsetpx));
+                return;
+            }
+            // Größte Höhe ermitteln
+            const maxH = Math.max(...items.map((el) => el.offsetHeight));
+            // Allen Kindern als Mindesthöhe setzen
+            items.forEach((el) => (el.style.minHeight = maxH + "px"));
+        };
+        setEqualHeights();
+        ScrollTrigger.addEventListener("refreshInit", setEqualHeights);
+
+        //Scrolltrigger
+        items.forEach((el, i) => {            
+            // el.style.zIndex = i + 1;
+            // Das letzte Kind wird nicht gepinnt, es scrollt normal und dient als Endpunkt
+            if (el === last) return;
+
+            ScrollTrigger.create({
+                trigger: el,
+                start: "top " + offsetpx,
+                endTrigger: last,
+                end: "top " + offsetpx,
+                pin: true,
+                pinSpacing: false,               // wichtig: sonst entstehen Lücken, die Kinder überlagern sich
+                invalidateOnRefresh: true,
+            });
+        });
+    }
+
+    function scrollAwardsFast(){
+        const wrapper = document.querySelector(".auszeichnungen-wrapper>div");
+        const gallery = wrapper?.querySelector(".wp-block-gallery");
+        if (!wrapper || !gallery) return;
+        const mm      = gsap.matchMedia();
+
+        const getScrollSettings = (start, end) => ({
+            trigger: wrapper,
+            start,
+            end,
+            scrub: true,
+            invalidateOnRefresh: true,
+            markers:false,
+        });
+        
+        // Distanz bis das letzte Kind an der Wrapper-Kante anliegt
+        const getDistance = (horizontal) => {
+            const last = gallery.lastElementChild;
+            if (!last) return 0;
+
+            const w = wrapper.getBoundingClientRect();
+            const l = last.getBoundingClientRect();
+
+            if (horizontal) {
+            const currentX = gsap.getProperty(gallery, "x") || 0;
+            const lastRight = l.right - w.left - currentX;
+            return Math.max(0, lastRight - wrapper.clientWidth);
+            }
+
+            const currentY = gsap.getProperty(gallery, "y") || 0;
+            const lastBottom = l.bottom - w.top - currentY;
+            return Math.max(0, lastBottom - wrapper.clientHeight);
+        };
+
+        
+
+        // Desktop: vertikal
+        mm.add("(min-width: 1025px)", () => {
+            gsap.fromTo(
+            gallery,
+            { y: 0 },
+            {
+                y: () => -getDistance(false),
+                ease: "none",
+                scrollTrigger: getScrollSettings("top 55%", "bottom 45%")
+            }
+            );
+        });
+
+        // Tablet/Mobile: horizontal
+        mm.add("(max-width: 1024px)", () => {
+            gsap.fromTo(
+            gallery,
+            { x: 0 },
+            {
+                x: () => -getDistance(true),
+                ease: "none",
+                scrollTrigger: getScrollSettings("center 70%", "bottom 70%")
+            }
+            );
+        });
+
+        // Falls Icons nachladen (lazy loading), Werte neu berechnen
+        gallery.querySelectorAll("img").forEach((img) => {
+            if (!img.complete) img.addEventListener("load", () => ScrollTrigger.refresh());
+        });
     }
 })(jQuery)

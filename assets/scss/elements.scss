@@ -17,8 +17,13 @@
 }
 
 @mixin dkm-button{
-    color:#000;
+    color:#fff;
     padding:14px 18px;
+    background-color: #000;
+    &:hover{
+        background-color: var(--wp--preset--color--tertiary) !important;
+        color: #000 !important;
+    }
 }
 
 .wp-site-blocks .wp-block-post-content {
@@ -79,16 +84,22 @@
 
         &:hover{
             background-color: var(--wp--preset--color--tertiary);
-            
         }
     }
 
-    .mb-button-outline{
-        border:1px solid #000;
+    .is-style-outline{
         .wp-block-button__link{
-            padding-left:18px;
+            background-color: transparent;
+            color:#000;
         }
     }
+
+    // .mb-button-outline{
+    //     border:1px solid #000;
+    //     .wp-block-button__link{
+    //         padding-left:18px;
+    //     }
+    // }
 
     .wp-block-button.btn-download a:after{
         content:"\F30A";
@@ -154,6 +165,11 @@
             opacity: 0;
             transform: scale(1.05);
         }
+        90% {
+            filter: blur(0px);
+            opacity: 1;
+            transform: scale(1);
+        }
         100% {
             filter: blur(0px);
             opacity: 1;
@@ -166,7 +182,7 @@
             display: block;
             filter: blur(20px);
             opacity: 0;
-            transform: scale(1.05);
+            
 
             //Ein-Bluren
             &.line-1 {
@@ -197,6 +213,7 @@
         padding-top:var(--mbfse--margin-bottom-block);
         padding-bottom:var(--mbfse--margin-bottom-block);
         margin-bottom: 0;
+        margin-block-end:0;
         //Inner
         >div{
             margin-bottom: 0;
@@ -310,31 +327,82 @@
         }
     }
 
-    //auszeichnungen-wrap
-    .auszeichnungen-wrapper{
-        .auszeichnungen-wrap{
-            flex-direction: column;
-            img{
-                filter: invert(1);
+    //Lösungen Wrapp die angepint sind
+    .loesung-pin{
+        //overflow: hidden;
+        div{
+            margin:0 !important;
+            box-sizing: border-box;        
+        }
+        .loesungen-wrap{
+            display: flex;
+            align-items: stretch;
+            >div:first-child{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                flex: 1;
             }
         }
-        @media (max-width: 1024px){
-            >div{
+    }
+
+    //auszeichnungen-wrap
+    .auszeichnungen-wrapper{
+        padding-top:0;
+        padding-bottom:0;
+        > div{
+            max-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
+            //Textwrap
+            >div.wp-block-group{
+                min-height: 100%;
+                display: flex;
                 flex-direction: column;
-                .auszeichnungen-wrap{
-                    flex-direction: row;
+                justify-content: center;
+            }                
+            //Iconswrap
+            .auszeichnungen-wrap.wp-block-gallery{
+                flex-direction: column;
+                will-change: transform;
+                padding-top:20px;
+                box-sizing: border-box;
+                align-items: center;
+                flex-wrap: nowrap;
+                img{
+                    filter: invert(1);                               
+                }
+                figure{
+                    width: 88px !important;
+                    max-width: 88px !important;
+                    margin-bottom: 0 !important;
+                    &:last-child{
+                        padding-bottom:20px
+                    }
                 }
             }
         }
 
-        @media (max-width: 768px){
-            figure.wp-block-image{
-                max-width: 40px !important;
+        @media (max-width: 1024px){
+            >div {
+                flex-direction: column;
+                gap: 40px;
+                justify-content: center;
+
+                >div.wp-block-group{
+                    min-height: auto;
+                } 
+                //Gallery
+                .auszeichnungen-wrap.wp-block-gallery{
+                    flex-direction: row;
+                    gap: 60px;
+                }
             }
         }
         @media (max-width: 601px){
-            .wp-block-gallery{
-                justify-content: space-around;
+            >div > .auszeichnungen-wrap.wp-block-gallery figure{
+                width: 50px !important;
+                max-width: 50px !important;
             }
         }
     }
@@ -442,6 +510,14 @@
     .nf-form-cont{
         width:var(--wp--style--global--content-size);
         max-width: 100%;
+
+        &#nf-form-1-cont{
+            .nf-mp-body{
+                .nf-row:not(:last-child){
+                    margin-bottom: 10px;
+                }
+            }
+        }
     }
     form{        
         --input-padding:20px 30px;
@@ -672,11 +748,23 @@ body:not(.home){
             .has-xx-large-font-size,
             h1{
                 font-size: var(--wp--preset--font-size--large);
-                margin-bottom: var(--mbfse--margin-bottom-inline);
+                margin-bottom: var(--mbfse--margin-bottom-block);
             }
             h2.wp-block-heading{
                 font-size: var(--wp--preset--font-size--large);
             }
         }
+    }
+}
+
+body.datenschutz{
+    h2.wp-block-heading{
+        font-size: calc(var(--wp--preset--font-size--large) * 0.8) !important;
+    }
+    h3.wp-block-heading{
+        font-size: calc(var(--wp--preset--font-size--large) * 0.65) !important;
+    }
+    h4.wp-block-heading{
+        font-size: calc(var(--wp--preset--font-size--large) * 0.55) !important;
     }
 }
