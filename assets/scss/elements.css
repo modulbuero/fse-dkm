@@ -263,6 +263,9 @@
     padding-left: 9px;
   }
 }
+.wp-site-blocks .wp-block-post-content .pin-spacer {
+  max-width: 100% !important;
+}
 .wp-site-blocks .wp-block-post-content .loesung-pin div {
   margin: 0 !important;
   box-sizing: border-box;
@@ -299,13 +302,14 @@
   box-sizing: border-box;
   align-items: center;
   flex-wrap: nowrap;
+  gap: 50px;
 }
 .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper > div .auszeichnungen-wrap.wp-block-gallery img {
   filter: invert(1);
 }
 .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper > div .auszeichnungen-wrap.wp-block-gallery figure {
-  width: 88px !important;
-  max-width: 88px !important;
+  width: 50px !important;
+  max-width: 50px !important;
   margin-bottom: 0 !important;
 }
 .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper > div .auszeichnungen-wrap.wp-block-gallery figure:last-child {
@@ -327,8 +331,8 @@
 }
 @media (max-width: 601px) {
   .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper > div > .auszeichnungen-wrap.wp-block-gallery figure {
-    width: 50px !important;
-    max-width: 50px !important;
+    width: 30px !important;
+    max-width: 30px !important;
   }
 }
 .wp-site-blocks .wp-block-post-content {

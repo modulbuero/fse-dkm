@@ -235,7 +235,7 @@
 		"typography": {
 			"fontFamily": "var(--wp--preset--font-family--inter)",
 			"fontSize":"18px",
-			"lineHeight": "1.25",
+			"lineHeight": "1.5",
 			"fontWeight":"300"
 		}
 	},
