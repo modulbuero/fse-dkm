@@ -175,25 +175,42 @@
 
         const parent    = document.querySelector(".loesung-pin");
         const items     = gsap.utils.toArray(".loesung-pin > *");
+        if (!parent || !items.length) return;
         const last      = items[items.length - 1];
         //Offset für den Pin-Punkt
         const style     = getComputedStyle(parent);
         const block     = style.getPropertyValue("--mbfse--margin-bottom-block");
-        const header    = style.getPropertyValue("--mbfse-header-height");       
-        const offset    = parseFloat(block) + parseFloat(header);
-        const offsetpx  = offset + "px";        
+        const header    = style.getPropertyValue("--mbfse-header-height");
+        const baseOffset = (parseFloat(block) || 0) + (parseFloat(header) || 0);
+        let offset = baseOffset;
+        const offsetpx = () => offset + "px";
         //Gleiche Höhe wenn nicht mobile
         const mqMobile  = window.matchMedia("(max-width: 600px)");
         const setEqualHeights = () => {
             //Zurücksetzen, damit die natürliche Höhe gemessen wird
-            items.forEach((el) => (el.style.minHeight = ""));
+            items.forEach((el) => {
+                el.style.minHeight = "";
+                el.style.maxHeight = "";
+            });
+            const maxH = Math.max(...items.map((el) => el.offsetHeight));
+
+            // Bei Panels höher als der Viewport: Offset entfernen und Panels auf Viewport-Höhe begrenzen
+            if (maxH > window.innerHeight) {
+                offset = 0;
+                items.forEach((el) => {
+                    el.style.minHeight = "100vh";
+                    el.style.maxHeight = "100vh";
+                });
+                return;
+            }
+
+            offset = baseOffset;
             // 2. Mobil: alle Kinder 100vh
             if (mqMobile.matches) {
-                items.forEach((el) => (el.style.minHeight = "calc(100vh - " + offsetpx));
+                items.forEach((el) => (el.style.minHeight = "calc(100vh - " + offset + "px)"));
                 return;
             }
             // Größte Höhe ermitteln
-            const maxH = Math.max(...items.map((el) => el.offsetHeight));
             // Allen Kindern als Mindesthöhe setzen
             items.forEach((el) => (el.style.minHeight = maxH + "px"));
         };
@@ -208,9 +225,9 @@
 
             ScrollTrigger.create({
                 trigger: el,
-                start: "top " + offsetpx,
+                start: () => "top " + offsetpx(),
                 endTrigger: last,
-                end: "top " + offsetpx,
+                end: () => "top " + offsetpx(),
                 pin: true,
                 pinSpacing: false,               // wichtig: sonst entstehen Lücken, die Kinder überlagern sich
                 invalidateOnRefresh: true,

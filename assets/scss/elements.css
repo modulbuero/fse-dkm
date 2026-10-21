@@ -159,9 +159,11 @@
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div {
   margin-bottom: 0;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div p + div {
-  max-width: 600px;
+  max-width: 720px;
   margin-bottom: 0;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div:last-child {
@@ -194,6 +196,9 @@
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div:last-child:hover:before {
   transform: rotate(0deg);
+}
+.wp-site-blocks .wp-block-post-content .loesungen-wrap .memysafeandi-loesung {
+  border-left-color: #fff !important;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child {
   padding-right: 100px;
@@ -274,19 +279,20 @@
   display: flex;
   align-items: stretch;
 }
-.wp-site-blocks .wp-block-post-content .loesung-pin .loesungen-wrap > div:first-child {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1;
+@media (max-width: 601px) {
+  .wp-site-blocks .wp-block-post-content .loesung-pin .loesungen-wrap > div:first-child {
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
 }
 .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper {
   padding-top: 0;
   padding-bottom: 0;
 }
 .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper > div {
-  max-height: 100vh;
   height: 100vh;
+  max-height: 1000px;
   overflow: hidden;
 }
 .wp-site-blocks .wp-block-post-content .auszeichnungen-wrapper > div > div.wp-block-group {
