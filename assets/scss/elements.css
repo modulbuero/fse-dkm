@@ -14,6 +14,9 @@
   text-transform: uppercase;
   margin-bottom: 0;
 }
+.wp-site-blocks .wp-block-post-content .has-large-font-size {
+  line-height: 1.25;
+}
 .wp-site-blocks .wp-block-post-content h2.wp-block-heading {
   text-align: left;
   font-size: var(--wp--preset--font-size--x-large);
@@ -41,6 +44,12 @@
   height: 100%;
   background: white;
   transform: translateY(var(--y));
+}
+.wp-site-blocks .wp-block-post-content h1, .wp-site-blocks .wp-block-post-content h2, .wp-site-blocks .wp-block-post-content h3, .wp-site-blocks .wp-block-post-content h4 {
+  hyphens: none;
+}
+.wp-site-blocks .wp-block-post-content h1 span, .wp-site-blocks .wp-block-post-content h2 span, .wp-site-blocks .wp-block-post-content h3 span, .wp-site-blocks .wp-block-post-content h4 span {
+  hyphens: none;
 }
 .wp-site-blocks .wp-block-post-content {
   /*Button*/
@@ -202,9 +211,6 @@
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child {
   padding-right: 100px;
-}
-.wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child h2 {
-  text-align: center;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child p {
   font-size: 32px;

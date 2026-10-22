@@ -37,6 +37,10 @@
         text-transform: uppercase;
         margin-bottom: 0;
     }
+    .has-large-font-size{
+        line-height: 1.25;    
+    }
+    
 
     h2.wp-block-heading{
         text-align: left;
@@ -66,6 +70,12 @@
             height:100%;
             background: white;
             transform: translateY(var(--y));
+        }
+    }
+    h1, h2, h3, h4{
+        hyphens: none;
+        span{
+            hyphens: none;
         }
     }
 
@@ -266,9 +276,7 @@
         &.anfrage-wrap{
             >div:first-child{
                 padding-right: 100px;
-                h2{
-                    text-align: center;
-                }
+                
                 p{
                     font-size: 32px;
                     @media (max-width: 1280px){
