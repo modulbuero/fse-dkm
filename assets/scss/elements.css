@@ -167,6 +167,11 @@
   margin-block-end: 0;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: var(--wp--style--global--content-size);
+  padding: 0;
+  width: 100%;
   margin-bottom: 0;
   flex-direction: row;
   justify-content: flex-start;
@@ -178,7 +183,7 @@
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div:last-child {
   position: absolute;
   top: 0;
-  left: calc(100% - 100px);
+  left: calc(100% - 80px);
   height: 100%;
   border-left: 2px solid #000;
   display: flex;
@@ -199,18 +204,22 @@
   font-size: 33px;
   transform: rotate(-45deg);
   transition: all 0.3s linear;
+  position: relative;
+  left: 20px;
+}
+@media (max-width: 768px) {
+  .wp-site-blocks .wp-block-post-content .loesungen-wrap > div:last-child:before {
+    left: 0px;
+  }
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div:last-child:hover {
-  left: calc(100% - 360px);
+  left: calc(100% - 400px);
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap > div:last-child:hover:before {
   transform: rotate(0deg);
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap .memysafeandi-loesung {
   border-left-color: #fff !important;
-}
-.wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child {
-  padding-right: 100px;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child p {
   font-size: 32px;
@@ -225,30 +234,40 @@
     font-size: 22px;
   }
 }
-@media (max-width: 601px) {
-  .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:first-child {
-    padding-right: 55px;
-  }
-}
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child {
   background-color: #fff;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child .nf-form-cont {
-  max-width: 630px;
+  max-width: 680px;
+  margin-left: 0 !important;
 }
 .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child.open, .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child:hover {
   background-color: var(--wp--preset--color--tertiary);
   left: calc(100% - 760px);
 }
 @media (max-width: 768px) {
+  .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child .nf-form-cont {
+    max-width: 80%;
+    margin: 0 !important;
+  }
   .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child.open, .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child:hover {
     left: 0;
-    width: calc(100% - 54px);
+    width: 100%;
+  }
+}
+@media (max-width: 1440px) {
+  .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap {
+    padding-right: 125px;
+  }
+}
+@media (max-width: 900px) {
+  .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap {
+    padding-right: 80px;
   }
 }
 @media (max-width: 601px) {
-  .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap > div:last-child {
-    min-width: calc(100% - 35px);
+  .wp-site-blocks .wp-block-post-content .loesungen-wrap.anfrage-wrap {
+    padding-right: 55px;
   }
 }
 @media (max-width: 768px) {
@@ -278,7 +297,7 @@
   max-width: 100% !important;
 }
 .wp-site-blocks .wp-block-post-content .loesung-pin div {
-  margin: 0 !important;
+  margin-bottom: 0 !important;
   box-sizing: border-box;
 }
 .wp-site-blocks .wp-block-post-content .loesung-pin .loesungen-wrap {
@@ -631,6 +650,12 @@
 .wp-site-blocks .wp-block-post-content form input[type=submit]:hover {
   background-color: var(--wp--preset--color--tertiary);
   color: #000;
+}
+@media (max-width: 768px) {
+  .wp-site-blocks .wp-block-post-content .has-background:not(.loesungen-wrap) {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .jBox-content {

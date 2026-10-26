@@ -226,6 +226,11 @@
         margin-block-end:0;
         //Inner
         >div{
+            margin-left: auto !important;
+            margin-right: auto !important;
+            max-width: var(--wp--style--global--content-size);
+            padding: 0;
+            width: 100%;
             margin-bottom: 0;
             flex-direction: row;
             justify-content: flex-start;
@@ -239,7 +244,7 @@
         >div:last-child{
             position: absolute;
             top: 0;
-            left: calc(100% - 100px);
+            left: calc(100% - 80px);
             height: 100%;
             border-left: 2px solid #000;
             display: flex;
@@ -260,9 +265,14 @@
                 font-size: 33px;
                 transform: rotate(-45deg);
                 transition: all .3s linear;
+                position: relative;
+                left:20px;
+                @media (max-width: 768px){
+                    left:0px;
+                }
             }
             &:hover{
-                left: calc(100% - 360px);
+                left: calc(100% - 400px);
                 &:before{
                     transform: rotate(0deg);
                 }
@@ -275,8 +285,6 @@
 
         &.anfrage-wrap{
             >div:first-child{
-                padding-right: 100px;
-                
                 p{
                     font-size: 32px;
                     @media (max-width: 1280px){
@@ -286,33 +294,41 @@
                     font-size: 22px;
                     }
                 }
-                @media (max-width: 601px){
-                    padding-right: 55px;
-                }
             }
             
             >div:last-child{
                 background-color: #fff;
                 .nf-form-cont{
-                    max-width: 630px;
+                    max-width: 680px;
+                    margin-left: 0 !important;
                 }
                 &.open,
                 &:hover{
                     background-color: var(--wp--preset--color--tertiary);
                     left: calc(100% - 760px);
                 }
-
+                
                 @media (max-width: 768px){
+                    .nf-form-cont{
+                        max-width: 80%;
+                        margin: 0 !important;
+                    }
                     &.open,
                     &:hover{
                         left:0;
-                        width: calc(100% - 54px);
+                        width: 100%;
                     }
                 }
-                @media (max-width: 601px){
-                    min-width: calc(100% - 35px)
-                }
-                
+            }
+
+            @media (max-width: 1440px){
+                padding-right: 125px;
+            }
+            @media (max-width: 900px){
+                padding-right: 80px;
+            }
+            @media (max-width: 601px){
+                padding-right: 55px;
             }
         }
 
@@ -348,7 +364,7 @@
     .loesung-pin{
         //overflow: hidden;
         div{
-            margin:0 !important;
+            margin-bottom:0 !important;
             box-sizing: border-box;        
         }
         .loesungen-wrap{
@@ -749,6 +765,15 @@
             }
         }
     }
+
+    //Mobile
+    @media (max-width: 768px){
+        .has-background:not(.loesungen-wrap){
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+    
 }
 
  //Helper-tooltip von NinjaForm
