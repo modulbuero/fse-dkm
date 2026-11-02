@@ -227,16 +227,16 @@
 			"heading": {
 				"typography": {
 					"fontFamily":"var(--wp--preset--font-family--inter)",
-					"lineHeight": "1.25",
-					"fontWeight":"300"
+					"lineHeight": "1.1",
+					"fontWeight":"200"
 				}
 			}
 		},
 		"typography": {
 			"fontFamily": "var(--wp--preset--font-family--inter)",
-			"fontSize":"18px",
+			"fontSize":"20px",
 			"lineHeight": "1.5",
-			"fontWeight":"300"
+			"fontWeight":"200"
 		}
 	},
 	"patterns" : [

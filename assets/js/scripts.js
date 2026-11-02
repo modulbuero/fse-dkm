@@ -15,6 +15,10 @@
             });
         });
         window.addEventListener("load", () => ScrollTrigger.refresh());
+        setTimeout(function() {
+            ScrollTrigger.refresh()
+            console.log("refresh")
+        },2000)
     })
 
     /*Kontakt-Formular Label-Activation*/
@@ -243,8 +247,8 @@
 
         const getScrollSettings = (start, end) => ({
             trigger: wrapper,
-            start,
-            end,
+            start: start,
+            end:end,
             scrub: true,
             invalidateOnRefresh: true,
             markers:false,
@@ -292,7 +296,7 @@
             {
                 x: () => -getDistance(true),
                 ease: "none",
-                scrollTrigger: getScrollSettings("center 70%", "bottom 70%")
+                scrollTrigger: getScrollSettings("top 60%", "bottom 40%")
             }
             );
         });

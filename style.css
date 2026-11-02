@@ -8,9 +8,9 @@ Text Domain:  	fse-dkm
 Version:        1.0
 */
 body .wp-site-blocks{
-    --wp--preset--font-size--xx-large:120px;
-    --wp--preset--font-size--x-large:100px;
-    --wp--preset--font-size--large:80px;
+    --wp--preset--font-size--xx-large:80px;
+    --wp--preset--font-size--x-large:60px;
+    --wp--preset--font-size--large:32px;
     --wp--preset--font-size--normal:20px;
     --wp--style--block-gap:100px;
     --dkmi-inline-abstand:60px;

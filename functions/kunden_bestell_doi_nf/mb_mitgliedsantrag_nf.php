@@ -8,8 +8,9 @@ if(!defined('ABSPATH')) exit;
 
 class NF_Member_Registration {
 
-    private $target_form = 'Hosting Bestellung';
+    private $target_form = 'Hosting Bestellung';    //für die Umstellung "2027" bestehender Kunden
     private $target_cancellation_form = 'Hosting Kündigung';
+    private $target_hosting_form = 'Hosting'; //für neue Kunden
 
     private $cancellation_fields = [
         'cancellation_customer_number' => [
@@ -57,7 +58,86 @@ class NF_Member_Registration {
      *   maxlength   – optional, für type=text
      *   placeholder – optional
      *   form_key    – Feldname (key) im Ninja-Formular
-     */
+     **/
+
+    private $hosting_fields = [
+        // ── Kunden Daten ─────────────────────────────────────────────────
+        'nf_plz' => [
+            'label'       => 'PLZ',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'maxlength'   => 6,
+            'placeholder' => '',
+            'form_key'    => 'postleitzahl',
+        ],
+        'nf_ort' => [
+            'label'       => 'Ort',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'ort',
+        ],
+        'nf_name' => [
+            'label'       => 'Name',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'name',
+        ],
+        'nf_strasze' => [
+            'label'       => 'Straße',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'strasze',
+        ],
+        'nf_email' => [
+            'label'       => 'Email',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'e-mail_fuer_die_bestaetigung',
+        ],
+        // ── Webseite Daten ─────────────────────────────────────────────────
+        'nf_paket' => [
+            'label'       => 'Paket',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'paket',
+        ],
+        'nf_wartung' => [
+            'label'       => 'Wartung',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'wartung',
+        ],
+        'nf_adresse_der_webseite' => [
+            'label'       => 'Webseite',
+            'type'        => 'text',
+            'sanitize'    => 'text',
+            'placeholder' => '',
+            'form_key'    => 'adresse_der_webseite',
+        ],
+        // ── Zahlungs Daten ────────────────────────────────────────────────────
+        'nf_iban' => [
+            'label'       => 'IBAN',
+            'type'        => 'text',
+            'sanitize'    => 'iban',
+            'maxlength'   => 34,
+            'placeholder' => 'DE89370400440532013000',
+            'form_key'    => 'iban_fuer_den_lastschrifteinzug',
+        ],
+        'nf_zahlungsart' => [
+            'label'    => 'Zahlungsweise',
+            'type'     => 'select',
+            'sanitize' => 'select',
+            'options'  => ['jahrlich' => 'Jährlich', 'monatlich' => 'Monatlich'],
+            'form_key' => 'zahlungsweise',
+        ],
+    ];
+
     private $custom_fields = [
 
         // ── Kunden Daten ─────────────────────────────────────────────────
@@ -152,6 +232,8 @@ class NF_Member_Registration {
 
         // Erweiterbare Felder
         $this->custom_fields = apply_filters('nf_member_custom_fields', $this->custom_fields);
+        $this->target_hosting_form = apply_filters('nf_hosting_form_title', $this->target_hosting_form);
+        $this->hosting_fields = apply_filters('nf_hosting_custom_fields', $this->hosting_fields);
         $this->target_cancellation_form = apply_filters('nf_cancellation_form_title', $this->target_cancellation_form);
         $this->cancellation_fields = apply_filters('nf_cancellation_custom_fields', $this->cancellation_fields);
     }
@@ -310,19 +392,35 @@ class NF_Member_Registration {
         }
     }
 
-    private function display_custom_field_value(string $meta_key, $value): string {
+    private function display_custom_field_value(string $meta_key, $value, ?array $field_configs = null): string {
         if(!is_scalar($value)) return '';
         $value = (string)$value;
 
-        if(isset($this->custom_fields[$meta_key]['options'][$value])){
-            return $this->custom_fields[$meta_key]['options'][$value];
+        $field_configs = $field_configs ?? $this->get_member_fields();
+        if(isset($field_configs[$meta_key]['options'][$value])){
+            return $field_configs[$meta_key]['options'][$value];
         }
 
         return $value;
     }
 
-    private function format_custom_fields_for_email(array $values, string $email = '', bool $html = false): string {
-        return $this->format_fields_for_email($values, $this->custom_fields, $html, $email);
+    private function get_member_fields(): array {
+        return array_merge($this->custom_fields, $this->hosting_fields);
+    }
+
+    private function get_submission_fields(array $data): array {
+        return ($data['field_set'] ?? '') === 'hosting'
+            ? $this->hosting_fields
+            : $this->custom_fields;
+    }
+
+    private function format_custom_fields_for_email(
+        array $values,
+        string $email = '',
+        bool $html = false,
+        ?array $field_configs = null
+    ): string {
+        return $this->format_fields_for_email($values, $field_configs ?? $this->custom_fields, $html, $email);
     }
 
     private function format_fields_for_email(array $values, array $field_configs, bool $html = true, string $email = ''): string {
@@ -396,7 +494,16 @@ class NF_Member_Registration {
         =========================================================================
     */
     public function handle_submission($form_data){
-        if(($form_data['settings']['title'] ?? '') !== $this->target_form) return;
+        $form_title = $form_data['settings']['title'] ?? '';
+        if($form_title === $this->target_form){
+            $field_configs = $this->custom_fields;
+            $field_set = 'custom';
+        } elseif($form_title === $this->target_hosting_form){
+            $field_configs = $this->hosting_fields;
+            $field_set = 'hosting';
+        } else {
+            return;
+        }
 
         $email      = '';
         $meta       = [];
@@ -410,7 +517,7 @@ class NF_Member_Registration {
             if(($field['type'] ?? '') === 'email' && $field_value !== '') {
                 $email = sanitize_email($field_value);
             }
-            $this->collect_nested_custom_fields($field, $meta);
+            $this->collect_nested_custom_fields($field, $meta, $field_configs);
         }
 
         if(!empty($meta['nf_email']) && is_email($meta['nf_email'])){
@@ -419,7 +526,7 @@ class NF_Member_Registration {
 
         if(!is_email($email)) return;
 
-        if(isset($this->custom_fields['nf_email'])){
+        if(isset($field_configs['nf_email'])){
             $meta['nf_email'] = $email;
         }
 
@@ -428,11 +535,12 @@ class NF_Member_Registration {
         add_option('nf_member_'.$token, [
             'email'      => $email,
             'meta'       => $meta,
+            'field_set'  => $field_set,
         ]);
 
         $confirm_url      = esc_url(add_query_arg(['nf_confirm' => $token], home_url('/hosting/bestellung-bestaetigen/')));
         $headers          = array('Content-Type: text/html; charset=UTF-8');
-        $submitted_fields = $this->format_custom_fields_for_email($meta, $email, true);
+        $submitted_fields = $this->format_custom_fields_for_email($meta, $email, true, $field_configs);
         $link_text        = "Bestellung bestätigen";
         $confirmbutton = "
             <p>
@@ -554,8 +662,11 @@ class NF_Member_Registration {
             exit;
         }
 
-        // Bestätigte Anträge als Protokoll speichern, ohne WordPress-Benutzerkonto.
-        $submissions = get_option('nf_member_confirmed_submissions', []);
+        // Bestätigte Anträge ohne WordPress-Benutzerkonto protokollieren.
+        $submission_option = ($data['field_set'] ?? '') === 'hosting'
+            ? 'nf_member_confirmed_hosting_submissions'
+            : 'nf_member_confirmed_submissions';
+        $submissions = get_option($submission_option, []);
         if(!is_array($submissions)) $submissions = [];
         $berlin_timezone    = new DateTimeZone('Europe/Berlin');
         $confirmed_datetime = new DateTimeImmutable('now', $berlin_timezone);
@@ -564,12 +675,16 @@ class NF_Member_Registration {
             'confirmed_at' => $confirmed_at,
             'email'        => sanitize_email($data['email'] ?? ''),
             'meta'         => is_array($data['meta'] ?? null) ? $data['meta'] : [],
+            'field_set'    => $data['field_set'] ?? 'custom',
         ];
-        update_option('nf_member_confirmed_submissions', $submissions, false);
+        update_option($submission_option, $submissions, false);
 
+        $field_configs = $this->get_submission_fields($data);
         $customer_fields = $this->format_custom_fields_for_email(
             is_array($data['meta'] ?? null) ? $data['meta'] : [],
-            sanitize_email($data['email'] ?? '')
+            sanitize_email($data['email'] ?? ''),
+            false,
+            $field_configs
         );
 
         $customer_email_body = "Sehr geehrte Kundin, sehr geehrter Kunde,<br><br>"
@@ -586,7 +701,9 @@ class NF_Member_Registration {
             $email_body     = "Eine Bestellung wurde bestätigt:<br><br>"
                 .$this->format_custom_fields_for_email(
                     is_array($data['meta'] ?? null) ? $data['meta'] : [],
-                    sanitize_email($data['email'] ?? '')
+                    sanitize_email($data['email'] ?? ''),
+                    false,
+                    $field_configs
                 )."<br>"
                 ."Bestätigt am: ".$current_date.$this->mailfooter();
             
@@ -609,19 +726,24 @@ class NF_Member_Registration {
             'dashicons-superhero', 26
         );
         add_submenu_page(
-            'nf-mitglieder', 'Bestätigte Bestellungen', 'Bestellungen',
+            'nf-mitglieder', 'Bestätigte Umzugs-Bestellungen', 'Umzug',
             'manage_options', 'nf-mitglieder',
             [$this, 'page_mitglieder_liste']
         );
         add_submenu_page(
-            'nf-mitglieder', 'E-Mail-Einstellungen', 'E-Mail-Einstellungen',
-            'manage_options', 'nf-mitglieder-email',
-            [$this, 'page_mitglieder_email']
+            'nf-mitglieder', 'Bestätigte Hosting-Bestellungen', 'Hosting',
+            'manage_options', 'nf-kunden',
+            [$this, 'page_kunden_liste']
         );
         add_submenu_page(
             'nf-mitglieder', 'Bestätigte Kündigungen', 'Kündigungen',
             'manage_options', 'nf-kuendigungen',
             [$this, 'page_cancellations']
+        );
+        add_submenu_page(
+            'nf-mitglieder', 'E-Mail-Einstellungen', 'E-Mail-Einstellungen',
+            'manage_options', 'nf-mitglieder-email',
+            [$this, 'page_mitglieder_email']
         );
     }
 
@@ -723,7 +845,13 @@ class NF_Member_Registration {
 
         $submissions = get_option('nf_member_confirmed_submissions', []);
         if(!is_array($submissions)) $submissions = [];
-        $submissions = array_reverse($submissions);
+        $hosting_submissions = get_option('nf_member_confirmed_hosting_submissions', []);
+        if(is_array($hosting_submissions)){
+            $submissions = array_merge($submissions, $hosting_submissions);
+        }
+        usort($submissions, function($a, $b){
+            return strcmp((string)($b['confirmed_at'] ?? ''), (string)($a['confirmed_at'] ?? ''));
+        });
 
         nocache_headers();
         header('Content-Type: text/csv; charset=UTF-8');
@@ -734,7 +862,8 @@ class NF_Member_Registration {
         fwrite($output, "\xEF\xBB\xBF");
 
         $headers = ['Bestätigt am'];
-        foreach($this->custom_fields as $cfg){
+        $member_fields = $this->get_member_fields();
+        foreach($member_fields as $cfg){
             $headers[] = $cfg['label'] === 'Kundennummer' ? 'Kdr' : $cfg['label'];
         }
         fputcsv($output, $headers, ';', '"', '\\');
@@ -746,12 +875,12 @@ class NF_Member_Registration {
                 : '–';
             $row = [$confirmed_at];
 
-            foreach($this->custom_fields as $meta_key => $cfg){
+            foreach($member_fields as $meta_key => $cfg){
                 $value = $fields[$meta_key] ?? '';
                 if($meta_key === 'nf_email' && $value === ''){
                     $value = $submission['email'] ?? '';
                 }
-                $value = $this->display_custom_field_value($meta_key, $value);
+                $value = $this->display_custom_field_value($meta_key, $value, $member_fields);
 
                 // Verhindert, dass Tabellenkalkulationen Zellwerte als Formeln ausführen.
                 if(is_string($value) && preg_match('/^[\s]*[=+@-]/u', $value)){
@@ -772,6 +901,10 @@ class NF_Member_Registration {
         if(!is_array($submissions)) $submissions = [];
         $submissions = array_reverse($submissions);
         $count = count($submissions);
+        $member_fields = array_diff_key(
+            $this->get_member_fields(),
+            array_flip(['nf_ort', 'nf_strasze'])
+        );
         ?>
         <div class="wrap nf-members-wrap">
             <h1>
@@ -791,7 +924,7 @@ class NF_Member_Registration {
                 <thead>
                     <tr>
                         <th>Bestätigt am</th>
-                        <?php foreach ($this->custom_fields as $cfg): ?>
+                        <?php foreach ($member_fields as $cfg): ?>
                             <th>
                                 <?php
                                 echo esc_html(
@@ -806,7 +939,7 @@ class NF_Member_Registration {
                 </thead>
                 <tbody>
                 <?php if(empty($submissions)): ?>
-                    <tr><td colspan="<?php echo esc_attr(count($this->custom_fields) + 1); ?>" class="nf-empty">Noch keine bestätigten Anträge vorhanden.</td></tr>
+                    <tr><td colspan="<?php echo esc_attr(count($member_fields) + 1); ?>" class="nf-empty">Noch keine bestätigten Anträge vorhanden.</td></tr>
                 <?php else: foreach($submissions as $submission):
                     $fields = is_array($submission['meta'] ?? null) ? $submission['meta'] : [];
                     $confirmed_at = !empty($submission['confirmed_at'])
@@ -815,12 +948,79 @@ class NF_Member_Registration {
                     ?>
                     <tr>
                         <td><?php echo esc_html($confirmed_at); ?></td>
-                        <?php foreach($this->custom_fields as $meta_key => $cfg):
+                        <?php foreach($member_fields as $meta_key => $cfg):
                             $value = $fields[$meta_key] ?? '';
                             if($meta_key === 'nf_email' && $value === '') {
                                 $value = $submission['email'] ?? '';
                             }
-                            $value = $this->display_custom_field_value($meta_key, $value);
+                            $value = $this->display_custom_field_value($meta_key, $value, $member_fields);
+                            ?>
+                            <td><?php echo esc_html($value !== '' ? $value : '–'); ?></td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+
+    public function page_kunden_liste(){
+        $submissions = get_option('nf_member_confirmed_hosting_submissions', []);
+        if(!is_array($submissions)) $submissions = [];
+
+        // Vorhandene Hosting-Bestätigungen aus dem bisherigen Sammelprotokoll weiter anzeigen.
+        $legacy_submissions = get_option('nf_member_confirmed_submissions', []);
+        if(is_array($legacy_submissions)){
+            foreach($legacy_submissions as $submission){
+                if(is_array($submission) && ($submission['field_set'] ?? '') === 'hosting'){
+                    $submissions[] = $submission;
+                }
+            }
+        }
+
+        usort($submissions, function($a, $b){
+            return strcmp((string)($b['confirmed_at'] ?? ''), (string)($a['confirmed_at'] ?? ''));
+        });
+        $member_fields = $this->hosting_fields;
+        ?>
+        <div class="wrap nf-members-wrap">
+            <h1>
+                <span class="dashicons dashicons-groups" style="font-size:26px;vertical-align:middle;margin-right:6px;"></span>
+                Bestätigte Hosting-Bestellungen
+            </h1>
+            <div class="nf-stat-row">
+                <div class="nf-stat">
+                    <strong><?php echo esc_html(count($submissions)); ?></strong>
+                    <span>Hosting-Bestellungen</span>
+                </div>
+            </div>
+            <table class="nf-members-table">
+                <thead>
+                    <tr>
+                        <th>Bestätigt am</th>
+                        <?php foreach($member_fields as $cfg): ?>
+                            <th><?php echo esc_html($cfg['label']); ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if(empty($submissions)): ?>
+                    <tr><td colspan="<?php echo esc_attr(count($member_fields) + 1); ?>" class="nf-empty">Noch keine Hosting-Bestellungen bestätigt.</td></tr>
+                <?php else: foreach($submissions as $submission):
+                    $fields = is_array($submission['meta'] ?? null) ? $submission['meta'] : [];
+                    $confirmed_at = !empty($submission['confirmed_at'])
+                        ? (new DateTimeImmutable($submission['confirmed_at'], new DateTimeZone('Europe/Berlin')))->format('d.m.Y H:i')
+                        : '–';
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($confirmed_at); ?></td>
+                        <?php foreach($member_fields as $meta_key => $cfg):
+                            $value = $fields[$meta_key] ?? '';
+                            if($meta_key === 'nf_email' && $value === ''){
+                                $value = $submission['email'] ?? '';
+                            }
+                            $value = $this->display_custom_field_value($meta_key, $value, $member_fields);
                             ?>
                             <td><?php echo esc_html($value !== '' ? $value : '–'); ?></td>
                         <?php endforeach; ?>
