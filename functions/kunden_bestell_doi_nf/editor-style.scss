@@ -10,6 +10,12 @@ $color_5: #888;
 	h1 {
 		margin-bottom: 16px;
 	}
+
+	.nf-stat-row{
+		button.button-primary{
+			display: inline-flex;
+		}
+	}
 }
 
 .nf-members-table {
@@ -43,34 +49,30 @@ $color_5: #888;
 		font-size: 13px;
 		border-bottom: 1px solid #f0f0f0;
 		vertical-align: middle;
+		&:last-child{
+			display: flex;
+    		gap: 10px;
+		}
 	}
 
     th,td{
-        &:first-child{
-            min-width: 110px;
-        }
-        &:nth-child(2){
-            min-width: 40px;
-        }
-        &:nth-child(9),
-        &:nth-child(4),
-        &:nth-child(5),
-        &:nth-child(6){
-            min-width: 100px;
-        }
-         &:nth-child(7){
-            min-width: 55px;
-        }
-        &:nth-child(8){
-            min-width: 100px;
-        }
-        &:nth-child(10){
-            min-width: 160px;
-        }
-        &:nth-child(11){
-            min-width: 100px;
-        }
+		min-width: 110px;
     }
+
+	td{
+		a.button{
+			display: flex;
+			align-items: center;
+			background: #c1f2ff;
+		}
+	}
+	form{
+		button{
+			background-color: #ff7474 !important;
+			color: #580000 !important;
+			border-color: #ac3636 !important;
+		}
+	}
 }
 
 .nf-badge {

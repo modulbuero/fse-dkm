@@ -814,6 +814,9 @@ body:not(.home).mb-headline-hide main .entry-content > div.has-background {
 body:not(.home).mb-headline-hide main .entry-content > div.has-background > h1 {
   padding-top: calc(var(--wp--style--block-gap) - var(--wp--style--root--padding-right));
 }
+body:not(.home).mb-headline-hide main .entry-content > h1 {
+  padding-top: calc(var(--wp--style--block-gap) + var(--wp--style--root--padding-right));
+}
 body:not(.home) h1.wp-block-post-title {
   font-size: var(--wp--preset--font-size--xx-large);
   font-weight: 200;

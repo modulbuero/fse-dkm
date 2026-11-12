@@ -4,6 +4,9 @@
 .nf-members-wrap h1 {
   margin-bottom: 16px;
 }
+.nf-members-wrap .nf-stat-row button.button-primary {
+  display: inline-flex;
+}
 
 .nf-members-table {
   border-collapse: collapse;
@@ -32,26 +35,22 @@
   border-bottom: 1px solid #f0f0f0;
   vertical-align: middle;
 }
-.nf-members-table th:first-child, .nf-members-table td:first-child {
+.nf-members-table td:last-child {
+  display: flex;
+  gap: 10px;
+}
+.nf-members-table th, .nf-members-table td {
   min-width: 110px;
 }
-.nf-members-table th:nth-child(2), .nf-members-table td:nth-child(2) {
-  min-width: 40px;
+.nf-members-table td a.button {
+  display: flex;
+  align-items: center;
+  background: #c1f2ff;
 }
-.nf-members-table th:nth-child(9), .nf-members-table th:nth-child(4), .nf-members-table th:nth-child(5), .nf-members-table th:nth-child(6), .nf-members-table td:nth-child(9), .nf-members-table td:nth-child(4), .nf-members-table td:nth-child(5), .nf-members-table td:nth-child(6) {
-  min-width: 100px;
-}
-.nf-members-table th:nth-child(7), .nf-members-table td:nth-child(7) {
-  min-width: 55px;
-}
-.nf-members-table th:nth-child(8), .nf-members-table td:nth-child(8) {
-  min-width: 100px;
-}
-.nf-members-table th:nth-child(10), .nf-members-table td:nth-child(10) {
-  min-width: 160px;
-}
-.nf-members-table th:nth-child(11), .nf-members-table td:nth-child(11) {
-  min-width: 100px;
+.nf-members-table form button {
+  background-color: #ff7474 !important;
+  color: #580000 !important;
+  border-color: #ac3636 !important;
 }
 
 .nf-badge {

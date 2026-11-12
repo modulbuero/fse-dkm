@@ -940,6 +940,9 @@ body:not(.home){
                         padding-top: calc(var(--wp--style--block-gap) - var(--wp--style--root--padding-right));
                     }
                 }
+                >h1{
+                    padding-top: calc(var(--wp--style--block-gap) + var(--wp--style--root--padding-right));
+                }
             }
         }
     }
