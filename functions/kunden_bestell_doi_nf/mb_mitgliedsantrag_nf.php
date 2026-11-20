@@ -509,6 +509,7 @@ class NF_Member_Registration {
             return;
         }
 
+        wp_mail('mak@modulbuero.de', 'Test', $form_title . " - " . $field_set);
         $email      = '';
         $meta       = [];
         $this->field_id_map = [];
@@ -1533,11 +1534,16 @@ class NF_Member_Registration {
     }
 
     public function mailfooter(){
-        $footer = "<br><br>Mit freundlichen Grüßen<br>
+        $footer = "<br><br>Mit besten Grüßen<br>
         Maik Pluschke<br>
         <a href='https://dkm.team/' style='font-size:12px;color:#000000 !important; text-decoration:none;'>
-            <strong>DESIGN &amp; KOMMUNIKATION</strong><br>IM MODULBÜRO
-        </a>";
+            <strong style='font-size:18px'>DESIGN &amp;<br>KOMMUNIKATION</strong><br>IM MODULBÜRO
+        </a>
+        <br>
+        <p style='font-size:12px'>
+        Haftungseinschränkung:<br>
+        Über das Internet versandte E-Mails können unter fremdem Namen erstellt oder inhaltlich verändert werden. Aus diesem Grund sind unsere als E-Mail verschickten Nachrichten grundsätzlich keine rechtsverbindlichen Erklärungen. Der Inhalt dieser E-Mail samt Anlagen sind vertraulich und u.U. rechtlich geschützt. Der Inhalt ist ausschließlich an einen bestimmten Empfänger gerichtet. Eine Weitergabe, die Herstellung von Kopien oder der sonstige Gebrauch durch Nichtadressaten ist nicht erlaubt. Ich bitte daher jeden anderen Empfänger, der diese E-Mail versehentlich erhält, mich umgehend zu informieren und die Nachricht zu löschen.
+        </p>";
 
         return $footer;
     }
